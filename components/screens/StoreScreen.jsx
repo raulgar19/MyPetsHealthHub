@@ -1,0 +1,250 @@
+import React, { useState } from 'react';
+import { Link } from 'expo-router';
+import { View, Text, Image, Pressable, StyleSheet, FlatList, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const products = [
+  { id: '1', name: 'Collar para Perro', price: '15.99€', image: require('../../assets/dog-collar.png') },
+  { id: '2', name: 'Juguete para Gato', price: '9.99€', image: require('../../assets/cat-toy.png') },
+  { id: '3', name: 'Cama para Mascota', price: '25.99€', image: require('../../assets/pet-bed.png') },
+  { id: '4', name: 'Comida para Perro', price: '19.99€', image: require('../../assets/dog-food.png') },
+  { id: '5', name: 'Arena para Gato', price: '12.99€', image: require('../../assets/cat-litter.png') },
+  { id: '6', name: 'Correa Extensible', price: '17.99€', image: require('../../assets/leash.png') },
+];
+
+const StoreScreen = () => {
+  const [cart, setCart] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const openProductModal = (product) => {
+    setSelectedProduct(product);
+    setQuantity(1);
+    setModalVisible(true);
+  };
+
+  const addToCart = () => {
+    setCart((prevCart) => {
+      const existingProduct = prevCart.find((item) => item.id === selectedProduct.id);
+      if (existingProduct) {
+        return prevCart.map((item) =>
+          item.id === selectedProduct.id ? { ...item, quantity: item.quantity + quantity } : item
+        );
+      } else {
+        return [...prevCart, { ...selectedProduct, quantity }];
+      }
+    });
+    setModalVisible(false);
+  };
+
+  const renderProduct = ({ item }) => (
+    <Pressable onPress={() => openProductModal(item)} style={styles.productContainer}>
+      <Image source={item.image} style={styles.productImage} />
+      <Text style={styles.productName}>{item.name}</Text>
+      <Text style={styles.productPrice}>{item.price}</Text>
+    </Pressable>
+  );
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.navbar}>
+      <Link asChild href={"/home"}>
+            <Pressable>
+                <Image
+                  source={require('../../assets/icons/logo-mobile.png')}
+                  style={styles.navIcon}
+                />
+              </Pressable>
+        </Link>
+        <Text style={styles.navTitle}>Tienda</Text>
+        <Link asChild href={"/cartStore"}>
+          <Pressable style={styles.cartButton}>
+            <Image
+              source={require('../../assets/icons/cart-icon.png')}
+              style={styles.cartIcon}
+            />
+          </Pressable>
+        </Link>
+      </View>
+      <FlatList
+        data={products}
+        renderItem={renderProduct}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.productsContainer}
+      />
+
+      {selectedProduct && (
+        <Modal visible={modalVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Image source={selectedProduct.image} style={styles.modalImage} />
+              <Text style={styles.modalProductName}>{selectedProduct.name}</Text>
+              <Text style={styles.modalProductPrice}>{selectedProduct.price}</Text>
+              
+              <View style={styles.quantityContainer}>
+                <Pressable onPress={() => setQuantity(Math.max(1, quantity - 1))} style={styles.quantityButton}>
+                  <Text style={styles.quantityButtonText}>-</Text>
+                </Pressable>
+                <Text style={styles.quantityText}>{quantity}</Text>
+                <Pressable onPress={() => setQuantity(quantity + 1)} style={styles.quantityButton}>
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </Pressable>
+              </View>
+              
+              <View style={styles.buttonContainer}>
+                <Pressable onPress={addToCart} style={styles.actionButton}>
+                  <Text style={styles.buttonText}>Añadir</Text>
+                </Pressable>
+                <Pressable onPress={() => setModalVisible(false)} style={styles.actionButton}>
+                  <Text style={styles.buttonText}>Cerrar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#B7E3DD',
+  },
+  navbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 60,
+    backgroundColor: '#006368',
+    paddingHorizontal: 20,
+    elevation: 5,
+  },
+  navIcon: {
+    width: 40,
+    height: 40,
+  },
+  navTitle: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  cartButton: {
+    padding: 10,
+  },
+  cartIcon: {
+    width: 40,
+    height: 40,
+  },
+  productsContainer: {
+    paddingHorizontal: 10,
+  },
+  productContainer: {
+    backgroundColor: '#FFFFFF',
+    flex: 1,
+    margin: 10,
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    marginBottom: 10,
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
+    color: '#333',
+  },
+  productPrice: {
+    fontSize: 14,
+    color: '#009688',
+    marginBottom: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '80%',
+  },
+  modalImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 15,
+  },
+  modalProductName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  modalProductPrice: {
+    fontSize: 16,
+    color: '#009688',
+    marginBottom: 15,
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  quantityButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+  },
+  quantityButtonText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  quantityText: {
+    fontSize: 16,
+    marginHorizontal: 10,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    width: '100%',
+  },
+  actionButton: {
+    backgroundColor: '#009688',
+    flex: 1,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
+
+export default StoreScreen;

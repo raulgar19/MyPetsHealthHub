@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Pressable, TextInput, ScrollView, Image, Modal, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
+import apiService from '../../api';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalScale] = useState(new Animated.Value(0));
   const [modalOpacity] = useState(new Animated.Value(0));
@@ -45,14 +47,28 @@ const LoginScreen = () => {
     ]).start(() => setModalVisible(false));
   };
 
-  const getNavigationPath = () => {
-    const trimmedEmail = email.trim();
-    if (adminRegex.test(trimmedEmail)) {
-      return '/vetHome';
-    } else if (emailRegex.test(trimmedEmail)) {
-      return '/home';
-    } else {
-      return null;
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setEmailError('Por favor, ingresa un correo electrónico o usuario.');
+      setPasswordError('Por favor, ingresa una contraseña.');
+      showModal();
+      return;
+    }
+
+    try {
+      const trimmedEmail = email.trim();
+      const response = adminRegex.test(trimmedEmail)
+        ? await apiService.vetLogin(trimmedEmail, password)
+        : await apiService.userLogin(trimmedEmail, password);
+
+      if (response.status === 200) {
+        const navigationPath = adminRegex.test(trimmedEmail) ? '/vetHome' : '/home';
+        window.location.href = navigationPath;
+      }
+    } catch (error) {
+      setEmailError('Correo o contraseña incorrectos.');
+      setPasswordError('');
+      showModal();
     }
   };
 
@@ -88,12 +104,10 @@ const LoginScreen = () => {
             onChangeText={setPassword}
             secureTextEntry
           />
-          {getNavigationPath() ? (
-            <Link href={getNavigationPath()} asChild>
-              <Pressable style={styles.button}>
-                <Text style={styles.buttonText}>Iniciar Sesión</Text>
-              </Pressable>
-            </Link>
+          {email && password ? (
+            <Pressable style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Iniciar Sesión</Text>
+            </Pressable>
           ) : (
             <Pressable
               style={styles.button}

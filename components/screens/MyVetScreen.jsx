@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'expo-router';
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+//import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MyVetScreen = () => {
@@ -26,25 +26,6 @@ const MyVetScreen = () => {
           </Pressable>
         </Link>
       </View>
-
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: 40.4168,
-          longitude: -3.7038,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: 40.4168,
-            longitude: -3.7038,
-          }}
-          title="Centro Veterinario Vida Animal"
-          description="Calle de las Flores, 10, Madrid"
-        />
-      </MapView>
 
       <View style={styles.vetInfoContainer}>
         <Image source={require('../../assets/icons/kivet-logo.png')} style={styles.vetImage} />

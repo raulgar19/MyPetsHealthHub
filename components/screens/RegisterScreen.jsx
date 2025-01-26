@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, ScrollView, Image, Pressable, Toucha
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Checkbox from 'expo-checkbox';
+import { Picker } from '@react-native-picker/picker';
 
 const RegisterScreen = () => {
   const [petFields, setPetFields] = useState([1]);
@@ -14,6 +15,8 @@ const RegisterScreen = () => {
   const [petSpecies, setPetSpecies] = useState({});
   const [additionalFieldEnabled, setAdditionalFieldEnabled] = useState({});
   const [isChecked, setIsChecked] = useState(false);
+  const [selectedVeterinarian, setSelectedVeterinarian] = useState("");
+  const [petSex, setPetSex] = useState({});
 
   const addPetFields = () => {
     setPetFields([...petFields, petFields.length + 1]);
@@ -24,10 +27,13 @@ const RegisterScreen = () => {
       setPetFields(petFields.slice(0, -1));
       const newPetSpecies = { ...petSpecies };
       const newAdditionalFieldEnabled = { ...additionalFieldEnabled };
+      const newPetSex = { ...petSex };
       delete newPetSpecies[petFields.length - 1];
       delete newAdditionalFieldEnabled[petFields.length - 1];
+      delete newPetSex[petFields.length - 1];
       setPetSpecies(newPetSpecies);
       setAdditionalFieldEnabled(newAdditionalFieldEnabled);
+      setPetSex(newPetSex);
     }
   };
 
@@ -63,6 +69,13 @@ const RegisterScreen = () => {
 
   const handleCheckboxToggle = () => {
     setIsChecked(!isChecked);
+  };
+
+  const handleSexChange = (index, value) => {
+    setPetSex(prev => ({
+      ...prev,
+      [index]: value,
+    }));
   };
 
   return (
@@ -105,12 +118,33 @@ const RegisterScreen = () => {
             textAlign="left"
           />
           <TextInput
+            placeholder="Nombre de usuario"
+            style={styles.input}
+            placeholderTextColor="#A9A9A9"
+            textAlign="left"
+          />
+          <TextInput
             placeholder="Contraseña"
             style={styles.input}
             placeholderTextColor="#A9A9A9"
             secureTextEntry
             textAlign="left"
           />
+
+          <Text style={styles.subtitle}>Veterinario Asociado</Text>
+          <View style={styles.input}>
+            <Picker
+              selectedValue={selectedVeterinarian}
+              onValueChange={(itemValue) => setSelectedVeterinarian(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Selecciona un veterinario" value="" />
+              <Picker.Item label="Dr. Pérez" value="dr-perez" />
+              <Picker.Item label="Dra. López" value="dra-lopez" />
+              <Picker.Item label="Dr. García" value="dr-garcia" />
+            </Picker>
+          </View>
+
           <Text style={styles.subtitle}>Datos de la cuenta</Text>
           <TextInput
             placeholder="Número de cuenta"
@@ -124,6 +158,7 @@ const RegisterScreen = () => {
             placeholderTextColor="#A9A9A9"
             textAlign="left"
           />
+
           <Text style={styles.subtitle}>Información de las Mascotas</Text>
           {petFields.map((field, index) => (
             <View key={index} style={styles.petContainer}>
@@ -153,12 +188,17 @@ const RegisterScreen = () => {
                 placeholderTextColor="#A9A9A9"
                 textAlign="left"
               />
-              <TextInput
-                placeholder="Sexo"
-                style={styles.input}
-                placeholderTextColor="#A9A9A9"
-                textAlign="left"
-              />
+              <View style={styles.input}>
+                <Picker
+                  selectedValue={petSex[index] || ""}
+                  onValueChange={(value) => handleSexChange(index, value)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Selecciona el sexo" value="" />
+                  <Picker.Item label="Macho" value="macho" />
+                  <Picker.Item label="Hembra" value="hembra" />
+                </Picker>
+              </View>
               <TouchableOpacity
                 onPress={() => setShow(true)}
                 style={styles.input}
@@ -232,13 +272,13 @@ const RegisterScreen = () => {
                   Acepto los Términos y Condiciones de Uso
                 </Text>
               </TouchableOpacity>
-              </Link>
+            </Link>
           </View>
-          <Link asChild href= {"/"}>
+          <Link asChild href={"/"}>
             <Pressable style={styles.button}>
               <Text style={styles.buttonText}>Crear cuenta</Text>
             </Pressable>
-            </Link>
+          </Link>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -307,6 +347,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     textAlign: 'left',
   },
+  picker: {
+    color: '#A9A9A9',
+  },
   dateText: {
     color: '#A9A9A9',
     textAlign: 'left',
@@ -371,6 +414,6 @@ const styles = StyleSheet.create({
     color: '#006368',
     textDecorationLine: 'underline',
   },
-  });
+});
 
-    export default RegisterScreen;
+export default RegisterScreen;

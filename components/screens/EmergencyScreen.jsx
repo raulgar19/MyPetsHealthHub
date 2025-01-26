@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View, Image, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 const EmergencyMobile = () => {
@@ -79,24 +78,7 @@ const EmergencyMobile = () => {
           </Pressable>
         </Link>
       </View>
-      {region && (
-        <MapView
-          style={styles.map}
-          initialRegion={region}
-          showsUserLocation={true}
-        >
-          {markers.map(marker => (
-            <Marker
-              key={marker.id}
-              coordinate={{
-                latitude: marker.latitude,
-                longitude: marker.longitude,
-              }}
-              title={marker.title}
-            />
-          ))}
-        </MapView>
-      )}
+      
       <FlatList
         data={markers}
         renderItem={renderItem}

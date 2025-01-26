@@ -29,8 +29,8 @@ const TermsAndConditionsMobile = () => {
 5. **Contacta con Nosotros**: Si tienes alguna pregunta sobre estos términos, no dudes en contactarnos.`}
         </Text>
         <Link asChild href={"/register"}>
-          <Pressable style={styles.acceptButton}>
-            <Text style={styles.buttonText}>Aceptar</Text>
+          <Pressable style={styles.returnButton}>
+            <Text style={styles.buttonText}>Volver</Text>
           </Pressable>
         </Link>
       </ScrollView>
@@ -79,9 +79,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     textAlign: 'justify',
   },
-  acceptButton: {
+  returnButton: {
     marginTop: 30,
-    marginHorizontal: 50,
+    marginHorizontal: 100,
     backgroundColor: '#009688',
     borderRadius: 5,
     paddingVertical: 10,

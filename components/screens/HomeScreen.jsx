@@ -29,9 +29,7 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.innerContainer}>
           <Text style={styles.title}>Bienvenid@ de nuevo, "Nombre"</Text>
-
-          <Text style={styles.categoryTitle}>Eres precioso HIJO DE LA GRAN PUTA</Text>
-          <Text style={color}>Gestión</Text>
+          <Text style={styles.categoryTitle}>Gestión</Text>
           <View style={styles.menuContainer}>
             <Link asChild href={"/petsManagement"}>
               <Pressable style={styles.menuItem}>

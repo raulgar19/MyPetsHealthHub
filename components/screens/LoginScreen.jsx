@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Pressable, TextInput, ScrollView, Image, Modal, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import apiService from '../../api';
 
 const LoginScreen = () => {
@@ -12,6 +12,8 @@ const LoginScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalScale] = useState(new Animated.Value(0));
   const [modalOpacity] = useState(new Animated.Value(0));
+
+  const router = useRouter();
 
   const adminRegex = /^ADMIN[A-Z]+$/;
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -62,8 +64,12 @@ const LoginScreen = () => {
         : await apiService.userLogin(trimmedEmail, password);
 
       if (response.status === 200) {
+        localStorage.setItem(
+          'userID',
+          response.data.id
+        )
         const navigationPath = adminRegex.test(trimmedEmail) ? '/vetHome' : '/home';
-        window.location.href = navigationPath;
+        router.push(navigationPath);
       }
     } catch (error) {
       setEmailError('Correo o contraseña incorrectos.');

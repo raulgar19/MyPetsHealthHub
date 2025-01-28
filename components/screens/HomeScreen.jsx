@@ -1,23 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View, Pressable, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiService from '../../api';
 
 const HomeScreen = () => {
-  console.log(localStorage.getItem('userID'))
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userID');
+    if (userId) {
+      apiService
+        .getUserById(userId)
+        .then((response) => {
+          setUserData(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+        });
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image
+              source={require('../../assets/icons/logo-mobile.png')}
+              style={styles.logo}
+            />
+          </Pressable>
         </Link>
         <Text style={styles.navTitle}>Menú Principal</Text>
-        <Link asChild href= {"/profile"}>
+        <Link asChild href={"/profile"}>
           <Pressable>
             <Image
               source={require('../../assets/icons/profile-icon.png')}
@@ -28,7 +44,9 @@ const HomeScreen = () => {
       </View>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Bienvenid@ de nuevo, "Nombre"</Text>
+          <Text style={styles.title}>
+          Bienvenid@ de nuevo, {userData.name}
+          </Text>
           <Text style={styles.categoryTitle}>Gestión</Text>
           <View style={styles.menuContainer}>
             <Link asChild href={"/petsManagement"}>
@@ -59,7 +77,6 @@ const HomeScreen = () => {
               </Pressable>
             </Link>
           </View>
-
           <Text style={styles.categoryTitle}>Salud</Text>
           <View style={styles.menuContainer}>
             <Link asChild href={"/vet"}>
@@ -81,7 +98,6 @@ const HomeScreen = () => {
               </Pressable>
             </Link>
           </View>
-
           <Text style={styles.categoryTitle}>Compras</Text>
           <View style={styles.menuContainer}>
             <Link asChild href={"/store"}>
@@ -112,7 +128,6 @@ const HomeScreen = () => {
               </Pressable>
             </Link>
           </View>
-
           <Text style={styles.categoryTitle}>Ocio</Text>
           <View style={styles.menuContainer}>
             <Link asChild href={"/social"}>

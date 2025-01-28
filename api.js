@@ -11,6 +11,10 @@ class ApiService {
     return this.api.post('AppUsers/userLogin', { email, password });
   }
 
+  getUserById(userId) {
+    return this.api.get(`AppUsers/getById/${userId}`)
+  }
+
   vetLogin(email, password) {
     return this.api.post('VetUsers/vetLogin', { email, password });
   }

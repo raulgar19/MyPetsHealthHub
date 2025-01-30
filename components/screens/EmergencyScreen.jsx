@@ -1,91 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Location from 'expo-location';
+import { Linking } from 'expo-router';
+import apiService from '../../api';
 
-const EmergencyMobile = () => {
-  const [region, setRegion] = useState(null);
-  const [markers, setMarkers] = useState([
-    {
-      id: '1',
-      latitude: -0.231,
-      longitude: -78.524,
-      title: 'Hospital Veterinario A',
-      address: 'Calle 1, Ciudad A',
-    },
-    {
-      id: '2',
-      latitude: -0.232,
-      longitude: -78.525,
-      title: 'Veterinario B',
-      address: 'Calle 2, Ciudad B',
-    },
-    {
-      id: '3',
-      latitude: -0.233,
-      longitude: -78.526,
-      title: 'Clínica C',
-      address: 'Calle 3, Ciudad C',
-    },
-  ]);
+const EmergencyScreen = () => {
+  const [emergencies, setEmergencies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
+    const fetchEmergencies = async () => {
+      try {
+        const response = await apiService.getAllEmergencies();
+        setEmergencies(response.data);
+      } catch (err) {
+        setError('Error al cargar la lista de emergencias');
+      } finally {
+        setLoading(false);
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
     };
 
-    getLocation();
+    fetchEmergencies();
   }, []);
 
+  const handlePress = (link) => {
+    if (link) {
+      if (Platform.OS === 'web') {
+        // Para web, abrimos en una nueva pestaña
+        window.open(link, '_blank');
+      } else {
+        // Para dispositivos móviles, usamos Linking
+        Linking.openURL(link).catch(() => {
+          Alert.alert('Error', 'No se pudo abrir el enlace de Google Maps.');
+        });
+      }
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={styles.itemTitle}>{item.title}</Text>
+    <Pressable style={styles.listItem} onPress={() => handlePress(item.link)}>
+      <Text style={styles.itemTitle}>{item.name}</Text>
       <Text style={styles.itemAddress}>{item.address}</Text>
-    </View>
+    </Pressable>
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
-        </Link>
+        <Pressable>
+          <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+        </Pressable>
         <Text style={styles.navTitle}>Urgencias 24h</Text>
-        <Link asChild href={"/profile"}>
-          <Pressable style={styles.profileButton}>
-            <Image
-              source={require('../../assets/icons/profile-icon.png')}
-              style={styles.profileIcon}
-            />
-          </Pressable>
-        </Link>
+        <Pressable style={styles.profileButton}>
+          <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
+        </Pressable>
       </View>
-      
-      <FlatList
-        data={markers}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-      />
+
+      {loading ? (
+        <Text style={styles.loadingText}>Cargando...</Text>
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={emergencies}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={<Text style={styles.noResults}>No se encontraron emergencias</Text>}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -120,12 +105,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  map: {
-    height: 300,
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 10,
-  },
   list: {
     flex: 1,
   },
@@ -157,6 +136,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
+  loadingText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#006368',
+    marginTop: 20,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    marginTop: 20,
+    fontSize: 16,
+  },
+  noResults: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
 });
 
-export default EmergencyMobile;
+export default EmergencyScreen;

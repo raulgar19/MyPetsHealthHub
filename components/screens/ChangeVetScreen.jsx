@@ -1,91 +1,90 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Location from 'expo-location';
+import apiService from '../../api';
+import * as Linking from 'expo-linking';
 
-const EmergencyMobile = () => {
-  const [region, setRegion] = useState(null);
-  const [markers, setMarkers] = useState([
-    {
-      id: '1',
-      latitude: -0.231,
-      longitude: -78.524,
-      title: 'Hospital Veterinario A',
-      address: 'Calle 1, Ciudad A',
-    },
-    {
-      id: '2',
-      latitude: -0.232,
-      longitude: -78.525,
-      title: 'Veterinario B',
-      address: 'Calle 2, Ciudad B',
-    },
-    {
-      id: '3',
-      latitude: -0.233,
-      longitude: -78.526,
-      title: 'Clínica C',
-      address: 'Calle 3, Ciudad C',
-    },
-  ]);
+const ChangeVetScreen = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [veterinarios, setVeterinarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
+    const fetchVets = async () => {
+      try {
+        const response = await apiService.getAllVets();
+        setVeterinarios(response.data);
+      } catch (err) {
+        setError('Error al cargar la lista de veterinarios');
+      } finally {
+        setLoading(false);
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
     };
 
-    getLocation();
+    fetchVets();
   }, []);
 
+  const handlePress = (item) => {
+    if (item.link) {
+      if (Platform.OS === 'web') {
+        window.open(item.link, '_blank');
+      } else {
+        Linking.openURL(item.link).catch(() => {
+          Alert.alert('Error', 'No se pudo abrir el enlace de Google Maps.');
+        });
+      }
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={styles.itemTitle}>{item.title}</Text>
+    <Pressable style={styles.listItem} onPress={() => handlePress(item)}>
+      <Text style={styles.itemTitle}>{item.name}</Text>
       <Text style={styles.itemAddress}>{item.address}</Text>
-    </View>
+    </Pressable>
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+          </Pressable>
         </Link>
         <Text style={styles.navTitle}>Veterinarios</Text>
-        <Link asChild href= {"/profile"}>
+        <Link asChild href={"/profile"}>
           <Pressable>
-            <Image
-              source={require('../../assets/icons/profile-icon.png')}
-              style={styles.profileIcon}
-            />
+            <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
           </Pressable>
         </Link>
       </View>
-      
-      <FlatList
-        data={markers}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar veterinario..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
       />
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#006368" style={styles.loader} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={veterinarios.filter(vet =>
+            vet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            vet.address.toLowerCase().includes(searchQuery.toLowerCase())
+          )}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={<Text style={styles.noResults}>No se encontraron veterinarios</Text>}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -117,11 +116,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  map: {
-    height: 300,
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 10,
+  searchInput: {
+    height: 40,
+    margin: 16,
+    borderWidth: 1,
+    borderColor: '#009688',
+    borderRadius: 8,
+    paddingLeft: 10,
+    fontSize: 16,
+    backgroundColor: 'white',
   },
   list: {
     flex: 1,
@@ -138,13 +141,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 5,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.5,
     elevation: 3,
+    alignItems: 'center',
   },
   itemTitle: {
     fontSize: 18,
@@ -154,6 +155,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
+  loader: {
+    marginTop: 20,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    marginTop: 20,
+    fontSize: 16,
+  },
+  noResults: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
 });
 
-export default EmergencyMobile;
+export default ChangeVetScreen;

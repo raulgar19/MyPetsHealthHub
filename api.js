@@ -19,6 +19,22 @@ class ApiService {
     return this.api.post('VetUsers/vetLogin', { email, password });
   }
 
+  getAllVets() {
+    return this.api.get('Vets/getAll');
+  }
+
+  getAllGroomings() {
+    return this.api.get('Groomings/getAll');
+  }
+
+  getAllEmergencies() {
+    return this.api.get('Emergencies/getAll');
+  }
+
+  getVetByUserId(userId) {
+    return this.api.get(`Vets/getById/${userId}`)
+  }
+
   addMoney(walletId, amount) {
     return this.api.put(`Wallets/addAmount/${walletId}`, { amount });
   }

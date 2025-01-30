@@ -1,91 +1,81 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, ActivityIndicator, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Location from 'expo-location';
+import * as Linking from 'expo-linking';
+import apiService from '../../api';
 
 const GroomingScreen = () => {
-  const [region, setRegion] = useState(null);
-  const [markers, setMarkers] = useState([
-    {
-      id: '1',
-      latitude: -0.231,
-      longitude: -78.524,
-      title: 'Peluquería Canina A',
-      address: 'Av. Principal 1, Ciudad A',
-    },
-    {
-      id: '2',
-      latitude: -0.232,
-      longitude: -78.525,
-      title: 'Estética Animal B',
-      address: 'Av. Secundaria 2, Ciudad B',
-    },
-    {
-      id: '3',
-      latitude: -0.233,
-      longitude: -78.526,
-      title: 'Spa de Mascotas C',
-      address: 'Calle Tercera 3, Ciudad C',
-    },
-  ]);
+  const [grooming, setGrooming] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
+    const fetchGroomings = async () => {
+      try {
+        const response = await apiService.getAllGroomings();
+        setGrooming(response.data);
+      } catch (err) {
+        setError('Error al cargar las peluquerías');
+      } finally {
+        setLoading(false);
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
     };
 
-    getLocation();
+    fetchGroomings();
   }, []);
 
+  const handlePress = (item) => {
+    if (item.link) {
+      if (Platform.OS === 'web') {
+        window.open(item.link, '_blank');
+      } else {
+        Linking.openURL(item.link).catch(() => {
+          Alert.alert('Error', 'No se pudo abrir el enlace.');
+        });
+      }
+    } else {
+      Alert.alert('Sin enlace', 'Esta peluquería no tiene un enlace disponible.');
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-      <Text style={styles.itemTitle}>{item.title}</Text>
+    <Pressable style={styles.listItem} onPress={() => handlePress(item)}>
+      <Text style={styles.itemTitle}>{item.name}</Text>
       <Text style={styles.itemAddress}>{item.address}</Text>
-    </View>
+    </Pressable>
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+          </Pressable>
         </Link>
         <Text style={styles.navTitle}>Peluquerías</Text>
-        <Link asChild href={"profile"}>
+        <Link asChild href={"/profile"}>
           <Pressable style={styles.profileButton}>
-            <Image
-              source={require('../../assets/icons/profile-icon.png')}
-              style={styles.profileIcon}
-            />
+            <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
           </Pressable>
         </Link>
       </View>
-      
-      <FlatList
-        data={markers}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-      />
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#006368" style={styles.loader} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={grooming}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={<Text style={styles.noResults}>No se encontraron peluquerías</Text>}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -120,12 +110,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  map: {
-    height: 300,
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 10,
-  },
   list: {
     flex: 1,
   },
@@ -155,6 +139,21 @@ const styles = StyleSheet.create({
   },
   itemAddress: {
     fontSize: 14,
+    color: '#555',
+  },
+  loader: {
+    marginTop: 20,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    marginTop: 20,
+    fontSize: 16,
+  },
+  noResults: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
     color: '#555',
   },
 });

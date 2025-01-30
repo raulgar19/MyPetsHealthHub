@@ -45,7 +45,7 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.innerContainer}>
           <Text style={styles.title}>
-          Bienvenid@ de nuevo, {userData.name}
+          Bienvenid@ de nuevo, {userData ? userData.name : 'Usuario'}
           </Text>
           <Text style={styles.categoryTitle}>Gestión</Text>
           <View style={styles.menuContainer}>

@@ -1,58 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Pressable, Image, FlatList, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import apiService from '../../api';
 
-const VetUsersScreen = () => {
+const PetsVetScreen = () => {
+  const [pets, setPets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userID, setUserID] = useState(null);
 
   useEffect(() => {
-    try {
-      const storedUserID = localStorage.getItem('userID');
-      if (storedUserID) {
-        setUserID(storedUserID);
+    const fetchUserID = () => {
+      try {
+        const storedUserID = localStorage.getItem('userID');
+        if (storedUserID) {
+          setUserID(storedUserID);
+        }
+      } catch (error) {
+        console.error('Error obteniendo userID:', error);
       }
-    } catch (error) {
-      console.error('Error obteniendo userID:', error);
-    }
+    };
+
+    fetchUserID();
   }, []);
 
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchPets = async () => {
       if (!userID) return;
 
       setLoading(true);
       try {
-        const response = await apiService.getUsersByVetId(userID);
-        setClients(response.data);
+        const response = await apiService.getPetsByVetId(userID);
+        setPets(response.data);
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error fetching pets:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClients();
+    fetchPets();
   }, [userID]);
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.phone.includes(searchQuery) ||
-    client.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+  };
+
+  const filteredPets = pets.filter(pet =>
+    pet.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const renderItem = ({ item }) => (
-    <View style={styles.client}>
-      <Text style={styles.clientName}>👤 {item.name} {item.surnames}</Text>
+    <View style={styles.pet}>
+      <Text style={styles.petName}>🐾 {item.name}</Text>
       <Text style={styles.details}>
-        📞 Teléfono: <Text style={styles.bold}>{item.phone}</Text>
+        🐕 Especie: <Text style={styles.bold}>{item.species}</Text>
       </Text>
       <Text style={styles.details}>
-        📧 Email: <Text style={styles.bold}>{item.email}</Text>
+        🏷️ Raza: <Text style={styles.bold}>{item.breed}</Text>
       </Text>
     </View>
   );
@@ -60,32 +66,34 @@ const VetUsersScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Link asChild href="/vetHome">
+        <Link asChild href="/vetHome" style={styles.link}>
           <Pressable>
-            <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+            <Image
+              source={require('../../assets/icons/logo-mobile.png')}
+              style={styles.logo}
+            />
           </Pressable>
         </Link>
         <View style={styles.navTextContainer}>
-          <Text style={styles.navTitle}>Clientes</Text>
+          <Text style={styles.navTitle}>Mascotas</Text>
         </View>
       </View>
-      
+
       <TextInput
-        style={styles.searchInput}
-        placeholder="Buscar cliente..."
+        style={styles.searchBar}
+        placeholder="Buscar animal..."
         value={searchQuery}
-        onChangeText={setSearchQuery}
+        onChangeText={handleSearch}
       />
 
       {loading ? (
         <ActivityIndicator size="large" color="#009688" style={styles.loader} />
       ) : (
         <FlatList
-          data={filteredClients}
+          data={filteredPets}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={styles.container}
-          ListEmptyComponent={<Text style={styles.noClients}>No hay clientes disponibles</Text>}
+          style={styles.list}
         />
       )}
     </SafeAreaView>
@@ -98,12 +106,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#B7E3DD',
   },
   navbar: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     height: 60,
     backgroundColor: '#006368',
     paddingHorizontal: 20,
+  },
+  link: {
+    position: 'absolute',
+    left: 20,
   },
   logo: {
     width: 40,
@@ -119,27 +132,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  container: {
-    padding: 16,
-  },
-  searchInput: {
+  searchBar: {
     height: 40,
-    margin: 16,
+    borderColor: '#006368',
+    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: '#009688',
+    marginHorizontal: 20,
+    marginVertical: 20,
     borderRadius: 8,
     paddingLeft: 10,
     fontSize: 16,
-    backgroundColor: 'white',
   },
-  client: {
+  list: {
+    marginHorizontal: 20,
+  },
+  pet: {
     backgroundColor: '#ffffff',
     padding: 16,
     marginVertical: 8,
     borderRadius: 10,
     elevation: 2,
   },
-  clientName: {
+  petName: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
@@ -151,14 +165,9 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
-  noClients: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 16,
-  },
   loader: {
     marginTop: 20,
   },
 });
 
-export default VetUsersScreen;
+export default PetsVetScreen;

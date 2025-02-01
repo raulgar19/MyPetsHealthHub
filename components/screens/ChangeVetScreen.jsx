@@ -75,8 +75,7 @@ const ChangeVetScreen = () => {
       ) : (
         <FlatList
           data={veterinarios.filter(vet =>
-            vet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            vet.address.toLowerCase().includes(searchQuery.toLowerCase())
+            vet.name.toLowerCase().includes(searchQuery.toLowerCase())
           )}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}

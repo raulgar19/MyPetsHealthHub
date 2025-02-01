@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, Pressable, Alert, Platform } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, Alert, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Linking } from 'expo-router';
+import { Link, Linking } from 'expo-router';
 import apiService from '../../api';
 
 const EmergencyScreen = () => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [emergencies, setEmergencies] = useState([]);
+  const [filteredEmergencies, setFilteredEmergencies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,6 +16,7 @@ const EmergencyScreen = () => {
       try {
         const response = await apiService.getAllEmergencies();
         setEmergencies(response.data);
+        setFilteredEmergencies(response.data);
       } catch (err) {
         setError('Error al cargar la lista de emergencias');
       } finally {
@@ -24,13 +27,23 @@ const EmergencyScreen = () => {
     fetchEmergencies();
   }, []);
 
+  useEffect(() => {
+    const filterEmergencies = () => {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = emergencies.filter(emergency =>
+        emergency.name.toLowerCase().includes(lowercasedQuery)
+      );
+      setFilteredEmergencies(filtered);
+    };
+
+    filterEmergencies();
+  }, [searchQuery, emergencies]);
+
   const handlePress = (link) => {
     if (link) {
       if (Platform.OS === 'web') {
-        // Para web, abrimos en una nueva pestaña
         window.open(link, '_blank');
       } else {
-        // Para dispositivos móviles, usamos Linking
         Linking.openURL(link).catch(() => {
           Alert.alert('Error', 'No se pudo abrir el enlace de Google Maps.');
         });
@@ -48,14 +61,25 @@ const EmergencyScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Pressable>
-          <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
-        </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+          </Pressable>
+        </Link>
         <Text style={styles.navTitle}>Urgencias 24h</Text>
-        <Pressable style={styles.profileButton}>
-          <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
-        </Pressable>
+        <Link asChild href={"/profile"}>
+          <Pressable style={styles.profileButton}>
+            <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
+          </Pressable>
+        </Link>
       </View>
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar Emergencias..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
 
       {loading ? (
         <Text style={styles.loadingText}>Cargando...</Text>
@@ -63,7 +87,7 @@ const EmergencyScreen = () => {
         <Text style={styles.errorText}>{error}</Text>
       ) : (
         <FlatList
-          data={emergencies}
+          data={filteredEmergencies}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
           style={styles.list}
@@ -104,6 +128,16 @@ const styles = StyleSheet.create({
   profileIcon: {
     width: 40,
     height: 40,
+  },
+  searchInput: {
+    height: 40,
+    margin: 16,
+    borderWidth: 1,
+    borderColor: '#009688',
+    borderRadius: 8,
+    paddingLeft: 10,
+    fontSize: 16,
+    backgroundColor: 'white',
   },
   list: {
     flex: 1,

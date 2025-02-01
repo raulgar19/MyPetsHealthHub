@@ -15,6 +15,14 @@ class ApiService {
     return this.api.get(`AppUsers/getById/${userId}`)
   }
 
+  getUsersByVetId(vetId) {
+    return this.api.get(`AppUsers/getByVetId/${vetId}`)
+  }
+
+  getPetsByVetId(vetId) {
+    return this.api.get(`Pets/getByVetId/${vetId}`)
+  }
+
   vetLogin(email, password) {
     return this.api.post('VetUsers/vetLogin', { email, password });
   }

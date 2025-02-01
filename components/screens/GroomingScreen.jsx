@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, FlatList, Pressable, ActivityIndicator, Alert, Platform } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, ActivityIndicator, Alert, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import apiService from '../../api';
@@ -9,6 +9,7 @@ const GroomingScreen = () => {
   const [grooming, setGrooming] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchGroomings = async () => {
@@ -62,13 +63,22 @@ const GroomingScreen = () => {
         </Link>
       </View>
 
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar peluquería..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
       {loading ? (
         <ActivityIndicator size="large" color="#006368" style={styles.loader} />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : (
         <FlatList
-          data={grooming}
+          data={grooming.filter(item =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
           style={styles.list}
@@ -109,6 +119,16 @@ const styles = StyleSheet.create({
   profileIcon: {
     width: 40,
     height: 40,
+  },
+  searchInput: {
+    height: 40,
+    margin: 16,
+    borderWidth: 1,
+    borderColor: '#009688',
+    borderRadius: 8,
+    paddingLeft: 10,
+    fontSize: 16,
+    backgroundColor: 'white',
   },
   list: {
     flex: 1,

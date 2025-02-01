@@ -65,7 +65,7 @@ const VetHomeScreen = () => {
                 <Text style={styles.menuText}>Ver usuarios del veterinario</Text>
               </Pressable>
             </Link>
-            <Link asChild href={"/petsVet"}>
+            <Link asChild href={"/vetPets"}>
               <Pressable style={styles.menuItem}>
                 <Image
                   source={require('../../assets/icons/logo-mobile.png')}

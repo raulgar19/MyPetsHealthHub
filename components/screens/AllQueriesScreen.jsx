@@ -1,30 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, View, Pressable, Image, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiService from '../../api';
 
 const AllQueriesScreen = () => {
-  const appointments = [
-    { id: 1, petName: 'Bobby', ownerName: 'Carlos Pérez', date: '2024-12-05', time: '10:00 AM', purpose: 'Revisión general.' },
-    { id: 2, petName: 'Luna', ownerName: 'María López', date: '2024-12-06', time: '2:30 PM', purpose: 'Vacunación anual.' },
-    { id: 3, petName: 'Max', ownerName: 'Luis Ramírez', date: '2024-12-07', time: '4:00 PM', purpose: 'Chequeo dental.' },
-  ];
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userID');
+    if (!userId) {
+      setError('Veterinario no encontrado');
+      setLoading(false);
+      return;
+    }
+
+    const fetchAppointments = async () => {
+      try {
+        const response = await apiService.getVetQueries(userId);
+        setAppointments(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar las citas');
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
 
   const renderItem = ({ item }) => (
     <View style={styles.appointment}>
-      <Text style={styles.petName}>{item.petName}</Text>
+      <Text style={styles.petName}>{item.pet.name}</Text>
       <Text style={styles.details}>
-        Propietario: <Text style={styles.bold}>{item.ownerName}</Text>
+        Propietario: <Text style={styles.bold}>{item.pet.appUser.name + " " + item.pet.appUser.surnames}</Text>
       </Text>
       <Text style={styles.details}>
         Fecha: <Text style={styles.bold}>{item.date}</Text>
       </Text>
       <Text style={styles.details}>
-        Hora: <Text style={styles.bold}>{item.time}</Text>
+        Hora: <Text style={styles.bold}>{item.hour}</Text>
       </Text>
       <Text style={styles.details}>Detalles: {item.purpose}</Text>
     </View>
   );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.loadingText}>Cargando citas...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -38,7 +75,7 @@ const AllQueriesScreen = () => {
           </Pressable>
         </Link>
         <View style={styles.navTextContainer}>
-          <Text style={styles.navTitle}>Todas las citas</Text>
+          <Text style={styles.navTitle}>Citas Pendientes</Text>
         </View>
       </View>
       <FlatList
@@ -119,6 +156,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: '#555',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
+  errorText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#D9534F',
   },
 });
 

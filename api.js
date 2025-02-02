@@ -31,6 +31,10 @@ class ApiService {
     return this.api.get('Vets/getAll');
   }
 
+  getVetQueries(id) {
+    return this.api.get(`ScheduledQueries/getByVetId/${id}`);
+  }
+
   getAllGroomings() {
     return this.api.get('Groomings/getAll');
   }

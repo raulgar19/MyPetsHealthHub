@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiService from '../../api';
 
 const SelectUserScreen = () => {
   const [clients, setClients] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchClients = () => {
-      const mockClients = [
-        { id: 1, name: 'Juan Pérez', phone: '123-456-789' },
-        { id: 2, name: 'María Gómez', phone: '987-654-321' },
-        { id: 3, name: 'Carlos López', phone: '456-789-123' },
-      ];
-      setClients(mockClients);
+    const fetchClients = async () => {
+      try {
+        const vetId = localStorage.getItem('userID');
+        if (!vetId) {
+          setError('No se encontró el ID del veterinario en el almacenamiento.');
+          setLoading(false);
+          return;
+        }
+
+        const response = await apiService.getUsersByVetId(vetId);
+        setClients(response.data);
+      } catch (err) {
+        setError('Error al obtener la lista de clientes.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchClients();
@@ -60,12 +73,18 @@ const SelectUserScreen = () => {
         onChangeText={handleSearch}
       />
 
-      <FlatList
-        data={filteredClients}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        style={styles.list}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#006368" style={styles.loader} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={filteredClients}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          style={styles.list}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -129,6 +148,14 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  loader: {
+    marginTop: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

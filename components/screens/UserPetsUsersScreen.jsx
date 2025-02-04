@@ -2,23 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiService from '../../api';
 
 const UserPetsUsersScreen = () => {
   const [clients, setClients] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchClients = () => {
-      const mockClients = [
-        { id: 1, name: 'Juan Pérez', phone: '123-456-789' },
-        { id: 2, name: 'María Gómez', phone: '987-654-321' },
-        { id: 3, name: 'Carlos López', phone: '456-789-123' },
-      ];
-      setClients(mockClients);
+    const userId = localStorage.getItem('userID');
+    if (!userId) {
+      setError('Veterinario no encontrado');
+      setLoading(false);
+      return;
+    }
+
+    const fetchClients = async () => {
+      try {
+        const response = await apiService.getUsersByVetId(userId);
+        setClients(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar los clientes');
+        setLoading(false);
+      }
     };
 
     fetchClients();
   }, []);
+
+  const keepOwner = (id) => {
+    localStorage.setItem("ownerID", id)
+  }
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -30,12 +46,28 @@ const UserPetsUsersScreen = () => {
 
   const renderItem = ({ item }) => (
     <Link asChild href={'/userPets'} style={styles.item}>
-      <Pressable>
+      <Pressable onPress={keepOwner(item.id)}>
         <Text style={styles.text}><Text style={styles.bold}>Nombre:</Text> {item.name}</Text>
         <Text style={styles.text}><Text style={styles.bold}>Teléfono:</Text> {item.phone}</Text>
       </Pressable>
     </Link>
   );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.loadingText}>Cargando clientes...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.errorText}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -129,6 +161,18 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
+  errorText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#D9534F',
   },
 });
 

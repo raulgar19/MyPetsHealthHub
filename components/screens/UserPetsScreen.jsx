@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiService from '../../api';
 
 const UserPetsScreen = () => {
   const [pets, setPets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPets = () => {
-      const mockPets = [
-        { id: 1, name: 'Bobby', type: 'Perro' },
-        { id: 2, name: 'Mia', type: 'Gato' },
-        { id: 3, name: 'Rex', type: 'Perro' },
-      ];
-      setPets(mockPets);
+    const fetchPets = async () => {
+      try {
+        const ownerId = localStorage.getItem('ownerID');
+        if (!ownerId) {
+          setError('No se encontró el ID del dueño en el almacenamiento.');
+          setLoading(false);
+          return;
+        }
+
+        const response = await apiService.getUserPets(ownerId);
+        setPets(response.data);
+      } catch (err) {
+        setError('Error al obtener las mascotas.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPets();
@@ -31,7 +44,7 @@ const UserPetsScreen = () => {
   const renderItem = ({ item }) => (
     <View style={styles.item}>
       <Text style={styles.text}><Text style={styles.bold}>Nombre:</Text> {item.name}</Text>
-      <Text style={styles.text}><Text style={styles.bold}>Especie:</Text> {item.type}</Text>
+      <Text style={styles.text}><Text style={styles.bold}>Especie:</Text> {item.species}</Text>
     </View>
   );
 
@@ -58,12 +71,18 @@ const UserPetsScreen = () => {
         onChangeText={handleSearch}
       />
 
-      <FlatList
-        data={filteredPets}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        style={styles.list}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#006368" style={styles.loader} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={filteredPets}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          style={styles.list}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -127,6 +146,14 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  loader: {
+    marginTop: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

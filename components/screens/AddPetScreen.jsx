@@ -1,61 +1,88 @@
-import React, { useState } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import apiService from "../../api";
 
-const AddPetMobile = () => {
-  const [petFields, setPetFields] = useState([1]);
+const AddPetScreen = () => {
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
   const [lastVaccineDate, setLastVaccineDate] = useState(new Date());
-  const [showVaccineDate, setShowVaccineDate] = useState(false);
-  const [petSpecies, setPetSpecies] = useState({});
-  const [additionalFieldEnabled, setAdditionalFieldEnabled] = useState({});
+  const [species, setSpecies] = useState("");
+  const [showVaccineField, setShowVaccineField] = useState(false);
+  const [petData, setPetData] = useState({
+    chip: "",
+    name: "",
+    species: "",
+    breed: "",
+    gender: "",
+    birthDay: "",
+    weight: "",
+    notes: "",
+    lastVaccineDate: "",
+    userId: parseInt(localStorage.getItem("userID"), 10),
+  });
 
-  const addPetFields = () => {
-    setPetFields([...petFields, petFields.length + 1]);
+  const handleSpeciesChange = (text) => {
+    setSpecies(text);
+    setShowVaccineField(text.toLowerCase() === "perro");
   };
 
-  const removePetFields = () => {
-    if (petFields.length > 1) {
-      setPetFields(petFields.slice(0, -1));
-      const newPetSpecies = { ...petSpecies };
-      const newAdditionalFieldEnabled = { ...additionalFieldEnabled };
-      delete newPetSpecies[petFields.length - 1];
-      delete newAdditionalFieldEnabled[petFields.length - 1];
-      setPetSpecies(newPetSpecies);
-      setAdditionalFieldEnabled(newAdditionalFieldEnabled);
-    }
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(false);
-    setDate(currentDate);
-  };
-
-  const onChangeVaccineDate = (event, selectedDate) => {
-    const currentDate = selectedDate || lastVaccineDate;
-    setShowVaccineDate(false);
-    setLastVaccineDate(currentDate);
-  };
-
-  const handleSpeciesChange = (index, text) => {
-    setPetSpecies(prev => ({
-      ...prev,
-      [index]: text,
+  const handleInputChange = (name, value) => {
+    setPetData((prevData) => ({
+      ...prevData,
+      [name]: value,
     }));
-    if (text.toLowerCase() === 'perro') {
-      setAdditionalFieldEnabled(prev => ({
-        ...prev,
-        [index]: true,
-      }));
-    } else {
-      setAdditionalFieldEnabled(prev => ({
-        ...prev,
-        [index]: false,
-      }));
+  };
+
+  const handleSubmit = async () => {
+    if (
+      !petData.chip ||
+      !petData.name ||
+      !petData.species ||
+      !petData.breed ||
+      !petData.gender ||
+      !petData.birthDay ||
+      !petData.weight ||
+      !petData.userId
+    ) {
+      console.error("Todos los campos son obligatorios.");
+      return;
+    }
+
+    const petRegisterModel = {
+      chip: petData.chip,
+      name: petData.name,
+      species: petData.species,
+      breed: petData.breed,
+      birthday: new Date(petData.birthDay).toISOString(),
+      weight: parseFloat(petData.weight),
+      gender: petData.gender,
+      notes: petData.notes || null,
+      lastVaccination: petData.lastVaccineDate
+        ? new Date(petData.lastVaccineDate).toISOString()
+        : null,
+      userId: petData.userId,
+    };
+
+    try {
+      await apiService.addPet(petRegisterModel);
+      console.log("Mascota registrada con éxito");
+    } catch (error) {
+      console.error(
+        "Error al añadir mascota:",
+        error.response ? error.response.data : error
+      );
     }
   };
 
@@ -63,122 +90,135 @@ const AddPetMobile = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
         <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
-        </Link>
-        <Text style={styles.navTitle}>Añadir Mascota</Text>
-        <Link asChild href= {"/profile"}>
           <Pressable>
             <Image
-              source={require('../../assets/icons/profile-icon.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
+              style={styles.logo}
+            />
+          </Pressable>
+        </Link>
+        <Text style={styles.navTitle}>Añadir Mascota</Text>
+        <Link asChild href={"/profile"}>
+          <Pressable>
+            <Image
+              source={require("../../assets/icons/profile-icon.png")}
               style={styles.profileIcon}
             />
           </Pressable>
         </Link>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {petFields.map((field, index) => (
-          <View key={index} style={styles.petContainer}>
-            <Text style={styles.header}>Mascota {index + 1}</Text>
+        <View style={styles.petContainer}>
+          <Text style={styles.header}>Información de la Mascota</Text>
+          <TextInput
+            placeholder="Nombre"
+            style={styles.input}
+            value={petData.name}
+            onChangeText={(text) => handleInputChange("name", text)}
+          />
+          <TextInput
+            placeholder="Nº Chip"
+            style={styles.input}
+            value={petData.chip}
+            onChangeText={(text) => handleInputChange("chip", text)}
+          />
+          <TextInput
+            placeholder="Especie (e.g., Perro, Gato)"
+            style={styles.input}
+            value={petData.species}
+            onChangeText={(text) => {
+              handleInputChange("species", text);
+              handleSpeciesChange(text);
+            }}
+          />
+          <TextInput
+            placeholder="Raza"
+            style={styles.input}
+            value={petData.breed}
+            onChangeText={(text) => handleInputChange("breed", text)}
+          />
+          <TextInput
+            placeholder="Sexo"
+            style={styles.input}
+            value={petData.gender}
+            onChangeText={(text) => handleInputChange("gender", text)}
+          />
+
+          {Platform.OS === "web" ? (
             <TextInput
-              placeholder="Nombre de la Mascota"
               style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              textAlign="left"
+              placeholder="Fecha de nacimiento (dd/mm/yyyy)"
+              value={petData.birthDay}
+              onChangeText={(text) => handleInputChange("birthDay", text)}
             />
-            <TextInput
-              placeholder="Nº Chip"
-              style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              textAlign="left"
-            />
-            <TextInput
-              placeholder="Especie (e.g., perro, gato)"
-              style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              textAlign="left"
-              onChangeText={(text) => handleSpeciesChange(index, text)}
-            />
-            <TextInput
-              placeholder="Raza"
-              style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              textAlign="left"
-            />
-            <TextInput
-              placeholder="Sexo"
-              style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              textAlign="left"
-            />
-            <TouchableOpacity
-              onPress={() => setShow(true)}
-              style={styles.input}
-            >
-              <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
-            </TouchableOpacity>
-            {show && (
+          ) : (
+            <TouchableOpacity style={styles.input}>
               <DateTimePicker
-                value={date}
+                value={date || new Date()}
                 mode="date"
                 display="default"
-                onChange={onChange}
+                onChange={(event, selectedDate) => {
+                  const dateStr = selectedDate
+                    ? selectedDate.toISOString().split("T")[0]
+                    : "";
+                  setDate(selectedDate || new Date());
+                  handleInputChange("birthDay", dateStr);
+                }}
                 maximumDate={new Date()}
               />
-            )}
-            <TextInput
-              placeholder="Peso (kg)"
-              style={styles.input}
-              placeholderTextColor="#A9A9A9"
-              keyboardType="numeric"
-              textAlign="left"
-            />
-            <TextInput
-              placeholder="Observaciones (e.g., alergias, tratamientos)"
-              style={[styles.input, styles.textArea]}
-              placeholderTextColor="#A9A9A9"
-              multiline
-              numberOfLines={4}
-              textAlign="left"
-            />
-            {additionalFieldEnabled[index] && (
-              <>
-                <Text style={styles.subtitle}>Vacunas Obligatorias</Text>
-                <TouchableOpacity
-                  onPress={() => setShowVaccineDate(true)}
+            </TouchableOpacity>
+          )}
+
+          <TextInput
+            placeholder="Peso (kg)"
+            style={styles.input}
+            value={petData.weight}
+            onChangeText={(text) => handleInputChange("weight", text)}
+            keyboardType="numeric"
+          />
+          <TextInput
+            placeholder="Observaciones (e.g., alergias, tratamientos)"
+            style={[styles.input, styles.textArea]}
+            value={petData.notes}
+            onChangeText={(text) => handleInputChange("notes", text)}
+            multiline
+            numberOfLines={4}
+          />
+
+          {showVaccineField && (
+            <>
+              <Text style={styles.subtitle}>Vacunas Obligatorias</Text>
+              {Platform.OS === "web" ? (
+                <TextInput
                   style={styles.input}
-                >
-                  <Text style={styles.dateText}>
-                    Última vacuna antirrábica: {lastVaccineDate.toLocaleDateString()}
-                  </Text>
-                </TouchableOpacity>
-                {showVaccineDate && (
+                  placeholder="Fecha última vacuna Rabia (dd/mm/yyyy)"
+                  value={petData.lastVaccineDate}
+                  onChangeText={(text) =>
+                    handleInputChange("lastVaccineDate", text)
+                  }
+                />
+              ) : (
+                <TouchableOpacity style={styles.input}>
                   <DateTimePicker
-                    value={lastVaccineDate}
+                    value={lastVaccineDate || new Date()}
                     mode="date"
                     display="default"
-                    onChange={onChangeVaccineDate}
+                    onChange={(event, selectedDate) => {
+                      const vaccineDate = selectedDate
+                        ? selectedDate.toISOString().split("T")[0]
+                        : "";
+                      setLastVaccineDate(selectedDate || new Date());
+                      handleInputChange("lastVaccineDate", vaccineDate);
+                    }}
                     maximumDate={new Date()}
                   />
-                )}
-              </>
-            )}
-          </View>
-        ))}
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.addButton} onPress={addPetFields}>
-            <Text style={styles.addButtonText}>+</Text>
-          </Pressable>
-          <Pressable style={styles.removeButton} onPress={removePetFields}>
-            <Text style={styles.removeButtonText}>-</Text>
-          </Pressable>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
         </View>
         <Link asChild href={"/home"}>
-          <Pressable style={styles.button}>
+          <Pressable style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Registrar</Text>
           </Pressable>
         </Link>
@@ -190,15 +230,15 @@ const AddPetMobile = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   logo: {
@@ -206,9 +246,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   profileIcon: {
     width: 40,
@@ -218,90 +258,52 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   petContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginBottom: 15,
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
     marginVertical: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
-    borderColor: '#006368',
+    borderColor: "#006368",
     borderWidth: 1,
-    textAlign: 'left',
-  },
-  dateText: {
-    color: '#A9A9A9',
-    textAlign: 'left',
-    lineHeight: 50,
   },
   textArea: {
     height: 100,
     paddingVertical: 10,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+  button: {
+    backgroundColor: "#009688",
+    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     marginTop: 20,
+    alignSelf: "center",
   },
-  addButton: {
-    backgroundColor: '#009688',
-    borderRadius: 50,
-    width: 50, 
-    height: 50, 
-    alignItems: 'center', 
-    justifyContent: 'center',
-  }, 
-  removeButton: { 
-    backgroundColor: '#F44336', 
-    borderRadius: 50, 
-    width: 50, 
-    height: 50, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-  }, 
-  addButtonText: { 
-    color: '#fff', 
-    fontSize: 30, 
-    fontWeight: 'bold',
-  }, 
-  removeButtonText: { 
-    color: '#fff', 
-    fontSize: 30, 
-    fontWeight: 'bold', 
-  }, 
-  button: { 
-    backgroundColor: '#009688', 
-    borderRadius: 5, 
-    paddingVertical: 15, 
-    paddingHorizontal: 30, 
-    marginTop: 20, 
-    alignSelf: 'center',
-  }, 
-  buttonText: { 
-    color: '#fff', 
-    fontSize: 18, 
-    fontWeight: 'bold', 
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
-export default AddPetMobile;
+export default AddPetScreen;

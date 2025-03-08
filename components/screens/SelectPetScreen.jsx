@@ -1,20 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useEffect } from "react";
+import { Link } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Image,
+  TextInput,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
 
 const SelectPetScreen = () => {
   const [pets, setPets] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const fetchPets = () => {
-      const mockPets = [
-        { id: 1, name: 'Bobby', type: 'Perro' },
-        { id: 2, name: 'Mia', type: 'Gato' },
-        { id: 3, name: 'Rex', type: 'Perro' },
-      ];
-      setPets(mockPets);
+    const fetchPets = async () => {
+      try {
+        const ownerID = parseInt(localStorage.getItem("ownerID"));
+        if (ownerID) {
+          const response = await apiService.getUserPets(ownerID);
+          setPets(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching pets:", error);
+      }
     };
 
     fetchPets();
@@ -24,15 +36,27 @@ const SelectPetScreen = () => {
     setSearchQuery(text);
   };
 
-  const filteredPets = pets.filter(pet =>
+  const handleSelectPet = async (petId) => {
+    try {
+      await localStorage.setItem("petID", petId.toString());
+    } catch (error) {
+      console.error("Error saving petID:", error);
+    }
+  };
+
+  const filteredPets = pets.filter((pet) =>
     pet.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const renderItem = ({ item }) => (
-    <Link asChild href={'/addQuery'} style={styles.item}>
-      <Pressable>
-        <Text style={styles.text}><Text style={styles.bold}>Nombre:</Text> {item.name}</Text>
-        <Text style={styles.text}><Text style={styles.bold}>Especie:</Text> {item.type}</Text>
+    <Link asChild href={"/addQuery"} style={styles.item}>
+      <Pressable onPress={() => handleSelectPet(item.id)}>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Nombre:</Text> {item.name}
+        </Text>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Especie:</Text> {item.species}
+        </Text>
       </Pressable>
     </Link>
   );
@@ -43,7 +67,7 @@ const SelectPetScreen = () => {
         <Link asChild href="/vetHome" style={styles.link}>
           <Pressable>
             <Image
-              source={require('../../assets/icons/logo-mobile.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
               style={styles.logo}
             />
           </Pressable>
@@ -73,20 +97,20 @@ const SelectPetScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
     marginBottom: 20,
   },
   link: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
   },
   logo: {
@@ -95,18 +119,18 @@ const styles = StyleSheet.create({
   },
   navTextContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchBar: {
     height: 40,
-    borderColor: '#006368',
-    backgroundColor: 'white',
+    borderColor: "#006368",
+    backgroundColor: "white",
     borderWidth: 1,
     marginHorizontal: 20,
     marginBottom: 20,
@@ -118,7 +142,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   item: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
@@ -128,7 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

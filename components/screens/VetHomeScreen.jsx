@@ -1,7 +1,14 @@
-import React from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Pressable, ScrollView, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  Image,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const VetHomeScreen = () => {
   return (
@@ -10,15 +17,15 @@ const VetHomeScreen = () => {
         <Link asChild href="/vetHome" style={styles.link}>
           <Pressable>
             <Image
-              source={require('../../assets/icons/logo-mobile.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
               style={styles.logo}
             />
           </Pressable>
         </Link>
-      <View style={styles.navTextContainer}>
-        <Text style={styles.navTitle}>Menú Veterinario</Text>
+        <View style={styles.navTextContainer}>
+          <Text style={styles.navTitle}>Menú Veterinario</Text>
+        </View>
       </View>
-    </View>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.innerContainer}>
           <Text style={styles.title}>Opciones</Text>
@@ -28,7 +35,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/selectUser"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Añadir cita</Text>
@@ -37,7 +44,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/removeQueryUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Eliminar cita</Text>
@@ -46,10 +53,10 @@ const VetHomeScreen = () => {
             <Link asChild href={"/allQueries"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuText}>Ver todas las citas</Text>
+                <Text style={styles.menuText}>Citas Pendientes</Text>
               </Pressable>
             </Link>
           </View>
@@ -59,28 +66,28 @@ const VetHomeScreen = () => {
             <Link asChild href={"/vetUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuText}>Ver usuarios del veterinario</Text>
+                <Text style={styles.menuText}>Usuarios del veterinario</Text>
               </Pressable>
             </Link>
             <Link asChild href={"/vetPets"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuText}>Ver mascotas del veterinario</Text>
+                <Text style={styles.menuText}>Mascotas del veterinario</Text>
               </Pressable>
             </Link>
             <Link asChild href={"/userPetsUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
+                  source={require("../../assets/icons/logo-mobile.png")}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuText}>Ver mascotas de un cliente</Text>
+                <Text style={styles.menuText}>Mascotas de un cliente</Text>
               </Pressable>
             </Link>
           </View>
@@ -93,19 +100,19 @@ const VetHomeScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   link: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
   },
   logo: {
@@ -114,51 +121,51 @@ const styles = StyleSheet.create({
   },
   navTextContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
   innerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     flexGrow: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     paddingBottom: 20,
   },
   title: {
     fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 20,
   },
   categoryTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'left',
+    fontWeight: "bold",
+    textAlign: "left",
     marginVertical: 10,
-    width: '100%',
-    color: '#006368',
+    width: "100%",
+    color: "#006368",
   },
   menuContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%",
   },
   menuItem: {
-    backgroundColor: '#009688',
-    width: '48%',
+    backgroundColor: "#009688",
+    width: "48%",
     aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -168,10 +175,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   menuText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 

@@ -70,6 +70,16 @@ class ApiService {
   getVetByUserId(userId) {
     return this.api.get(`Vets/getById/${userId}`);
   }
+
+  getPetQueries(petId, vetId) {
+    return this.api.get(
+      `ScheduledQueries/getPetQueries?petId=${petId}&vetId=${vetId}`
+    );
+  }
+
+  deletePetQuery(queryId) {
+    return this.api.delete(`ScheduledQueries/removeQuery/${queryId}`);
+  }
 }
 
 const apiService = new ApiService();

@@ -47,6 +47,10 @@ class ApiService {
     return this.api.get(`Pets/getByUserId/${userId}`);
   }
 
+  getUserPetCards(userId) {
+    return this.api.get(`PetCards/userPetCards/${userId}`);
+  }
+
   vetLogin(email, password) {
     return this.api.post("VetUsers/vetLogin", { email, password });
   }
@@ -79,6 +83,10 @@ class ApiService {
 
   deletePetQuery(queryId) {
     return this.api.delete(`ScheduledQueries/removeQuery/${queryId}`);
+  }
+
+  deletePet(petId) {
+    return this.api.delete(`Pets/deletePet/${petId}`);
   }
 }
 

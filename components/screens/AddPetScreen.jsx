@@ -15,10 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import apiService from "../../api";
 
+const convertDateFormat = (dateStr) => {
+  const parts = dateStr.split("/");
+  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+};
+
 const AddPetScreen = () => {
   const [date, setDate] = useState(new Date());
   const [lastVaccineDate, setLastVaccineDate] = useState(new Date());
-  const [species, setSpecies] = useState("");
   const [showVaccineField, setShowVaccineField] = useState(false);
   const [petData, setPetData] = useState({
     chip: "",
@@ -34,7 +38,6 @@ const AddPetScreen = () => {
   });
 
   const handleSpeciesChange = (text) => {
-    setSpecies(text);
     setShowVaccineField(text.toLowerCase() === "perro");
   };
 
@@ -60,17 +63,26 @@ const AddPetScreen = () => {
       return;
     }
 
+    const formattedBirthDay = petData.birthDay
+      ? convertDateFormat(petData.birthDay)
+      : null;
+    const formattedLastVaccineDate = petData.lastVaccineDate
+      ? convertDateFormat(petData.lastVaccineDate)
+      : null;
+
     const petRegisterModel = {
       chip: petData.chip,
       name: petData.name,
       species: petData.species,
       breed: petData.breed,
-      birthday: new Date(petData.birthDay).toISOString(),
+      birthday: formattedBirthDay
+        ? new Date(formattedBirthDay).toISOString()
+        : null,
       weight: parseFloat(petData.weight),
       gender: petData.gender,
       notes: petData.notes || null,
-      lastVaccination: petData.lastVaccineDate
-        ? new Date(petData.lastVaccineDate).toISOString()
+      lastVaccination: formattedLastVaccineDate
+        ? new Date(formattedLastVaccineDate).toISOString()
         : null,
       userId: petData.userId,
     };

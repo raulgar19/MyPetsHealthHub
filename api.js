@@ -15,8 +15,8 @@ class ApiService {
     return this.api.post("Pets/addPet", request);
   }
 
-  addMoney(walletId, amount) {
-    return this.api.put(`Wallets/addAmount/${walletId}`, { amount });
+  addMoney(userId, amount) {
+    return this.api.put(`Wallets/addAmount/${userId}`, { amount });
   }
 
   addQuery(request) {

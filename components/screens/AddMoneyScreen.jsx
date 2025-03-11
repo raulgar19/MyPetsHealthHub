@@ -1,34 +1,43 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, TextInput, Pressable, Image, Modal, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import apiService from '../../api';
+import React, { useState, useRef } from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  Image,
+  Modal,
+  Animated,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
 
 const AddMoney = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [amount, setAmount] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [amount, setAmount] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const handleAddMoney = async () => {
-    const walletId = 1;
+    const userId = localStorage.getItem("userID");
     const amountToAdd = parseFloat(amount);
 
     if (isNaN(amountToAdd) || amountToAdd <= 0) {
-      setErrorMessage('Por favor, ingresa una cantidad válida.');
+      setErrorMessage("Por favor, ingresa una cantidad válida.");
       setModalVisible(true);
       return;
     }
 
     try {
-      const response = await apiService.addMoney(walletId, amountToAdd);
+      const response = await apiService.addMoney(userId, amountToAdd);
       if (response.status === 200) {
-        setErrorMessage('¡Fondos añadidos con éxito!');
+        setErrorMessage("¡Fondos añadidos con éxito!");
       }
       setModalVisible(true);
     } catch (error) {
-      setErrorMessage('Error al añadir fondos. Inténtalo de nuevo.');
+      setErrorMessage("Error al añadir fondos. Inténtalo de nuevo.");
       setModalVisible(true);
     }
   };
@@ -43,7 +52,7 @@ const AddMoney = () => {
         <Link asChild href={"/home"}>
           <Pressable style={styles.button}>
             <Image
-              source={require('../../assets/icons/logo-mobile.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
               style={styles.logo}
             />
           </Pressable>
@@ -52,7 +61,7 @@ const AddMoney = () => {
         <Link asChild href={"/profile"}>
           <Pressable style={styles.button}>
             <Image
-              source={require('../../assets/icons/profile-icon.png')}
+              source={require("../../assets/icons/profile-icon.png")}
               style={styles.profileIcon}
             />
           </Pressable>
@@ -89,15 +98,15 @@ const AddMoney = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   logo: {
@@ -105,9 +114,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   button: {
     padding: 5,
@@ -118,68 +127,68 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginHorizontal: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 40,
-    color: '#333',
-    textAlign: 'center',
+    color: "#333",
+    textAlign: "center",
   },
   input: {
     height: 50,
     padding: 10,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   addButton: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     borderRadius: 8,
     marginHorizontal: 100,
     marginVertical: 20,
     paddingVertical: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContainer: {
     width: 250,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 5,
   },
   modalText: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   closeButton: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   closeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

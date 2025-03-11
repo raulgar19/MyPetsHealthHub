@@ -118,7 +118,7 @@ const UserProfileScreen = () => {
         </Text>
         <Text style={styles.nick}>@{userData.nickname}</Text>
         <View style={styles.buttonContainer}>
-          <Link asChild href={"/editProfile"}>
+          <Link asChild href={"/updateProfile"}>
             <Pressable style={styles.button}>
               <Text style={styles.buttonText}>Editar Perfil</Text>
             </Pressable>

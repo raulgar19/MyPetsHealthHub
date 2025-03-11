@@ -85,6 +85,14 @@ class ApiService {
     );
   }
 
+  confirmPassword(request) {
+    return this.api.post("AppUsers/confirmPassword", request);
+  }
+
+  updateUser(id, request) {
+    return this.api.put(`AppUsers/updateUser/${id}`, request);
+  }
+
   deletePetQuery(queryId) {
     return this.api.delete(`ScheduledQueries/removeQuery/${queryId}`);
   }

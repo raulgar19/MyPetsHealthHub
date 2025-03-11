@@ -1,21 +1,39 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, Pressable, Modal, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  Modal,
+  Animated,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ApiService from "../../api";
 
 const UserProfileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [farewellModalVisible, setFarewellModalVisible] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
 
-  const userData = {
-    name: 'Juan Pérez',
-    email: 'juan.perez@example.com',
-    socialUser: '@juan_prz',
-    profileImage: require('../../assets/icons/profile-icon.png'),
-  };
+  const userId = localStorage.getItem("userID");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await ApiService.getUserById(userId);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const animateOpenModal = () => {
     Animated.parallel([
@@ -68,24 +86,37 @@ const UserProfileScreen = () => {
     }
   }, [modalVisible, farewellModalVisible]);
 
+  if (!userData) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text>Cargando...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image
+              source={require("../../assets/icons/logo-mobile.png")}
+              style={styles.logo}
+            />
+          </Pressable>
         </Link>
         <Text style={styles.navTitle}>Perfil del usuario</Text>
       </View>
 
       <View style={styles.container}>
-        <Image source={userData.profileImage} style={styles.profileImage} />
-        <Text style={styles.name}>{userData.name}</Text>
-        <Text style={styles.nick}>{userData.socialUser}</Text>
+        <Image
+          source={require("../../assets/icons/profile-icon.png")}
+          style={styles.profileImage}
+        />
+        <Text style={styles.name}>
+          {userData?.name} {userData?.surnames}
+        </Text>
+        <Text style={styles.nick}>@{userData.nickname}</Text>
         <View style={styles.buttonContainer}>
           <Link asChild href={"/editProfile"}>
             <Pressable style={styles.button}>
@@ -105,16 +136,28 @@ const UserProfileScreen = () => {
         onRequestClose={() => animateCloseModal(() => setModalVisible(false))}
       >
         <View style={styles.modalOverlay}>
-          <Animated.View style={[styles.modalContainer, { transform: [{ scale: scaleValue }], opacity: opacityValue }]}>
+          <Animated.View
+            style={[
+              styles.modalContainer,
+              { transform: [{ scale: scaleValue }], opacity: opacityValue },
+            ]}
+          >
             <Text style={styles.modalTitle}>Confirmar eliminación</Text>
             <Text style={styles.modalMessage}>
-              ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se
+              puede deshacer.
             </Text>
             <View style={styles.modalButtonContainer}>
-              <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={() => animateCloseModal(() => setModalVisible(false))}>
+              <Pressable
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => animateCloseModal(() => setModalVisible(false))}
+              >
                 <Text style={styles.buttonText}>Cancelar</Text>
               </Pressable>
-              <Pressable style={[styles.modalButton, styles.confirmButton]} onPress={confirmDelete}>
+              <Pressable
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={confirmDelete}
+              >
                 <Text style={styles.buttonText}>Confirmar</Text>
               </Pressable>
             </View>
@@ -126,18 +169,28 @@ const UserProfileScreen = () => {
         transparent={true}
         visible={farewellModalVisible}
         animationType="none"
-        onRequestClose={() => animateCloseModal(() => setFarewellModalVisible(false))}
+        onRequestClose={() =>
+          animateCloseModal(() => setFarewellModalVisible(false))
+        }
       >
         <View style={styles.modalOverlay}>
-          <Animated.View style={[styles.modalContainer, { transform: [{ scale: scaleValue }], opacity: opacityValue }]}>
+          <Animated.View
+            style={[
+              styles.modalContainer,
+              { transform: [{ scale: scaleValue }], opacity: opacityValue },
+            ]}
+          >
             <Text style={styles.modalTitle}>Cuenta eliminada</Text>
             <Text style={styles.modalMessage}>
-              Lamentamos que te vayas. ¡Gracias por haber sido parte de nuestra comunidad!
+              Lamentamos que te vayas. ¡Gracias por haber sido parte de nuestra
+              comunidad!
             </Text>
             <Link asChild href={"/"}>
               <Pressable
                 style={[styles.modalButton, styles.confirmButton]}
-                onPress={() => animateCloseModal(() => setFarewellModalVisible(false))}
+                onPress={() =>
+                  animateCloseModal(() => setFarewellModalVisible(false))
+                }
               >
                 <Text style={styles.buttonText}>Cerrar</Text>
               </Pressable>
@@ -152,19 +205,19 @@ const UserProfileScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   logoContainer: {
-    position: 'absolute', 
+    position: "absolute",
     left: 10,
   },
   logo: {
@@ -172,16 +225,16 @@ const styles = StyleSheet.create({
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     flex: 1,
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   profileImage: {
@@ -192,55 +245,55 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   nick: {
     fontSize: 16,
-    color: '#777',
+    color: "#777",
     marginBottom: 20,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 20,
   },
   button: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContainer: {
     width: 300,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   modalMessage: {
     fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
+    color: "#555",
+    textAlign: "center",
     marginBottom: 20,
   },
   modalButtonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   modalButton: {
@@ -249,10 +302,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   cancelButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   confirmButton: {
-    backgroundColor: '#FF5252',
+    backgroundColor: "#FF5252",
   },
 });
 

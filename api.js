@@ -55,6 +55,10 @@ class ApiService {
     return this.api.post("VetUsers/vetLogin", { email, password });
   }
 
+  getWalletByUserId(userId) {
+    return this.api.get(`Wallets/getWalletByUserId/${userId}`);
+  }
+
   getAllVets() {
     return this.api.get("Vets/getAll");
   }

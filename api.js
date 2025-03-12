@@ -93,6 +93,18 @@ class ApiService {
     return this.api.put(`AppUsers/updateUser/${id}`, request);
   }
 
+  changeBankAccount(userId, request) {
+    return this.api.put(`AppUsers/changeBankAccount/${userId}`, request);
+  }
+
+  changeEmail(userId, request) {
+    return this.api.put(`AppUsers/changeEmail/${userId}`, request);
+  }
+
+  changePassword(userId, request) {
+    return this.api.put(`AppUsers/changePassword/${userId}`, request);
+  }
+
   deletePetQuery(queryId) {
     return this.api.delete(`ScheduledQueries/removeQuery/${queryId}`);
   }

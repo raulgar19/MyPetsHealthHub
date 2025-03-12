@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
-import { Link } from 'expo-router';
-import { View, Text, TextInput, StyleSheet, Pressable, Image, Modal, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from "react";
+import { Link, useRouter } from "expo-router";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Image,
+  Modal,
+  Animated,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
 
 const ChangeBankAcountScreen = () => {
-  const [bankAccount, setBankAccount] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [bankAccount, setBankAccount] = useState("");
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [opacityValue] = useState(new Animated.Value(0));
+  const [modalMessage, setModalMessage] = useState("");
 
-  const handleSaveChanges = () => {
+  const router = useRouter();
+
+  const userId = localStorage.getItem("userID");
+
+  const handleSaveChanges = async () => {
+    if (bankAccount === "") {
+      setModalMessage("Por favor, ingrese un número de cuenta.");
+      setConfirmModalVisible(true);
+      showModal();
+      return;
+    }
+
+    await apiService.changeBankAccount(userId, { bankAccount });
+
+    setModalMessage("El número de cuenta se ha actualizado correctamente.");
     setConfirmModalVisible(true);
+    showModal();
+  };
 
+  const showModal = () => {
     Animated.timing(opacityValue, {
       toValue: 1,
       duration: 300,
@@ -21,25 +47,32 @@ const ChangeBankAcountScreen = () => {
   };
 
   const handleCloseModal = () => {
-    Animated.timing(opacityValue, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
+    if (
+      modalMessage === "El número de cuenta se ha actualizado correctamente."
+    ) {
       setConfirmModalVisible(false);
-    });
+      router.push("");
+    } else {
+      Animated.timing(opacityValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setConfirmModalVisible(false);
+      });
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-      <Link asChild href={"/home"}>
-            <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image
+              source={require("../../assets/icons/logo-mobile.png")}
+              style={styles.logo}
+            />
+          </Pressable>
         </Link>
         <Text style={styles.navTitle}>Cambiar cuenta bancaria</Text>
       </View>
@@ -62,18 +95,14 @@ const ChangeBankAcountScreen = () => {
         animationType="none"
         onRequestClose={handleCloseModal}
       >
-        <Animated.View
-          style={[styles.modalOverlay, { opacity: opacityValue }]}
-        >
+        <Animated.View style={[styles.modalOverlay, { opacity: opacityValue }]}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Confirmación</Text>
-            <Text style={styles.modalMessage}>Los cambios se han guardado correctamente.</Text>
+            <Text style={styles.modalTitle}>Atención</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
             <View style={styles.modalButtonContainer}>
-              <Link asChild href="/">
-                <Pressable style={styles.modalButton} onPress={handleCloseModal}>
-                  <Text style={styles.buttonText}>Cerrar</Text>
-                </Pressable>
-              </Link>
+              <Pressable style={styles.modalButton} onPress={handleCloseModal}>
+                <Text style={styles.buttonText}>Cerrar</Text>
+              </Pressable>
             </View>
           </View>
         </Animated.View>
@@ -85,102 +114,86 @@ const ChangeBankAcountScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
-  },
-  logoContainer: {
-    position: 'absolute', 
-    left: 10,
   },
   logo: {
     width: 40,
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     flex: 1,
   },
   container: {
     flex: 1,
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: '#555',
-    alignSelf: 'flex-start',
-    marginBottom: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
-    width: '70%',
+    width: "70%",
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
-    borderColor: '#006368',
+    borderColor: "#006368",
     borderWidth: 1,
   },
   button: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 20,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
     width: 300,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   modalMessage: {
     fontSize: 16,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
   modalButton: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,

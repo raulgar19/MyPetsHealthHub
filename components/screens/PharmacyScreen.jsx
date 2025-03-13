@@ -19,6 +19,8 @@ const PharmacyScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
   const [balance, setBalance] = useState(null);
+  const [pharmacyProducts, setPharmacyProducts] = useState([]);
+  const [parapharmacyProducts, setParapharmacyProducts] = useState([]);
 
   const userId = localStorage.getItem("userID");
 
@@ -32,50 +34,28 @@ const PharmacyScreen = () => {
       }
     };
 
+    const fetchPharmacyProducts = async () => {
+      try {
+        const response = await apiService.getProductsByProductTypeId(2);
+        setPharmacyProducts(response.data);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+      }
+    };
+
+    const fetchParapharmacyProducts = async () => {
+      try {
+        const response = await apiService.getProductsByProductTypeId(3);
+        setParapharmacyProducts(response.data);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+      }
+    };
+
     fetchWallet();
+    fetchPharmacyProducts();
+    fetchParapharmacyProducts();
   }, [userId]);
-
-  const pharmacyProducts = [
-    {
-      id: "1",
-      name: "Antiparasitario",
-      price: "20.99€",
-      image: require("../../assets/antiparasitario.png"),
-    },
-    {
-      id: "2",
-      name: "Pipeta",
-      price: "35.99€",
-      image: require("../../assets/pipeta.png"),
-    },
-    {
-      id: "3",
-      name: "Medicamento",
-      price: "15.99€",
-      image: require("../../assets/medicamento.png"),
-    },
-  ];
-
-  const parapharmacyProducts = [
-    {
-      id: "4",
-      name: "Shampoo para Mascotas",
-      price: "10.99€",
-      image: require("../../assets/shampoo.png"),
-    },
-    {
-      id: "5",
-      name: "Cepillo para Mascotas",
-      price: "8.99€",
-      image: require("../../assets/brush.png"),
-    },
-    {
-      id: "6",
-      name: "Colonia para Mascotas",
-      price: "12.99€",
-      image: require("../../assets/colonia.png"),
-    },
-  ];
 
   const openProductModal = (product) => {
     setSelectedProduct(product);
@@ -108,7 +88,7 @@ const PharmacyScreen = () => {
     >
       <Image source={item.image} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>{item.price}</Text>
+      <Text style={styles.productPrice}>{item.price}€</Text>
     </Pressable>
   );
 

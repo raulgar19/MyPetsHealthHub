@@ -85,6 +85,10 @@ class ApiService {
     );
   }
 
+  getProductsByProductTypeId(productTypeId) {
+    return this.api.get(`Products/getProductsByTypeId/${productTypeId}`);
+  }
+
   confirmPassword(request) {
     return this.api.post("AppUsers/confirmPassword", request);
   }

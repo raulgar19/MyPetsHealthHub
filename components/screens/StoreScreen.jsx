@@ -12,46 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
 
-const products = [
-  {
-    id: "1",
-    name: "Collar para Perro",
-    price: "15.99€",
-    image: require("../../assets/dog-collar.png"),
-  },
-  {
-    id: "2",
-    name: "Juguete para Gato",
-    price: "9.99€",
-    image: require("../../assets/cat-toy.png"),
-  },
-  {
-    id: "3",
-    name: "Cama para Mascota",
-    price: "25.99€",
-    image: require("../../assets/pet-bed.png"),
-  },
-  {
-    id: "4",
-    name: "Comida para Perro",
-    price: "19.99€",
-    image: require("../../assets/dog-food.png"),
-  },
-  {
-    id: "5",
-    name: "Arena para Gato",
-    price: "12.99€",
-    image: require("../../assets/cat-litter.png"),
-  },
-  {
-    id: "6",
-    name: "Correa Extensible",
-    price: "17.99€",
-    image: require("../../assets/leash.png"),
-  },
-];
-
 const StoreScreen = () => {
+  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -59,6 +21,7 @@ const StoreScreen = () => {
   const [balance, setBalance] = useState(null);
 
   const userId = localStorage.getItem("userID");
+  const productTypeId = 1;
 
   useEffect(() => {
     const fetchWallet = async () => {
@@ -70,7 +33,19 @@ const StoreScreen = () => {
       }
     };
 
+    const fetchProducts = async () => {
+      try {
+        const response = await apiService.getProductsByProductTypeId(
+          productTypeId
+        );
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+      }
+    };
+
     fetchWallet();
+    fetchProducts();
   }, [userId]);
 
   const openProductModal = (product) => {
@@ -102,9 +77,9 @@ const StoreScreen = () => {
       onPress={() => openProductModal(item)}
       style={styles.productContainer}
     >
-      <Image source={item.image} style={styles.productImage} />
+      <Image source={{ uri: item.image }} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>{item.price}</Text>
+      <Text style={styles.productPrice}>{item.price}€</Text>
     </Pressable>
   );
 
@@ -139,7 +114,7 @@ const StoreScreen = () => {
       <FlatList
         data={products}
         renderItem={renderProduct}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         contentContainerStyle={styles.productsContainer}
       />
@@ -148,12 +123,16 @@ const StoreScreen = () => {
         <Modal visible={modalVisible} transparent animationType="slide">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Image source={selectedProduct.image} style={styles.modalImage} />
+              <Image
+                source={{ uri: selectedProduct.image }}
+                style={styles.modalImage}
+              />
               <Text style={styles.modalProductName}>
                 {selectedProduct.name}
               </Text>
+              <Text>{selectedProduct.description}</Text>
               <Text style={styles.modalProductPrice}>
-                {selectedProduct.price}
+                {selectedProduct.price}€
               </Text>
 
               <View style={styles.quantityContainer}>

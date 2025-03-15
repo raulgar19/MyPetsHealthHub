@@ -14,7 +14,8 @@ import apiService from "../../api";
 
 const PharmacyScreen = () => {
   const [selectedTab, setSelectedTab] = useState("Pharmacy");
-  const [cart, setCart] = useState([]);
+  const [pharmacyCart, setPharmacyCart] = useState([]);
+  const [parapharmacyCart, setParapharmacyCart] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
@@ -36,7 +37,7 @@ const PharmacyScreen = () => {
 
     const fetchPharmacyProducts = async () => {
       try {
-        const response = await apiService.getProductsByProductTypeId(2);
+        const response = await apiService.getProductsByProductTypeId(3);
         setPharmacyProducts(response.data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
@@ -45,7 +46,7 @@ const PharmacyScreen = () => {
 
     const fetchParapharmacyProducts = async () => {
       try {
-        const response = await apiService.getProductsByProductTypeId(3);
+        const response = await apiService.getProductsByProductTypeId(2);
         setParapharmacyProducts(response.data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
@@ -57,6 +58,19 @@ const PharmacyScreen = () => {
     fetchParapharmacyProducts();
   }, [userId]);
 
+  useEffect(() => {
+    const storedPharmacyCart = localStorage.getItem("pharmacyCart");
+    const storedParapharmacyCart = localStorage.getItem("parapharmacyCart");
+
+    if (storedPharmacyCart) {
+      setPharmacyCart(JSON.parse(storedPharmacyCart));
+    }
+
+    if (storedParapharmacyCart) {
+      setParapharmacyCart(JSON.parse(storedParapharmacyCart));
+    }
+  }, []);
+
   const openProductModal = (product) => {
     setSelectedProduct(product);
     setQuantity(1);
@@ -64,7 +78,13 @@ const PharmacyScreen = () => {
   };
 
   const addToCart = () => {
-    setCart((prevCart) => {
+    const cartToUpdate =
+      selectedTab === "Pharmacy" ? pharmacyCart : parapharmacyCart;
+
+    const setCartToUpdate =
+      selectedTab === "Pharmacy" ? setPharmacyCart : setParapharmacyCart;
+
+    setCartToUpdate((prevCart) => {
       const existingProduct = prevCart.find(
         (item) => item.id === selectedProduct.id
       );
@@ -78,6 +98,7 @@ const PharmacyScreen = () => {
         return [...prevCart, { ...selectedProduct, quantity }];
       }
     });
+
     setModalVisible(false);
   };
 
@@ -92,6 +113,11 @@ const PharmacyScreen = () => {
     </Pressable>
   );
 
+  const saveCartToLocalStorage = () => {
+    localStorage.setItem("pharmacyCart", JSON.stringify(pharmacyCart));
+    localStorage.setItem("parapharmacyCart", JSON.stringify(parapharmacyCart));
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
@@ -104,7 +130,13 @@ const PharmacyScreen = () => {
           </Pressable>
         </Link>
         <Text style={styles.navTitle}>Farmacia</Text>
-        <Link asChild href="/cartPharmacy">
+        <Link
+          asChild
+          href="/cartPharmacy"
+          onPress={() => {
+            saveCartToLocalStorage();
+          }}
+        >
           <Pressable style={styles.cartButton}>
             <Image
               source={require("../../assets/icons/cart-icon.png")}

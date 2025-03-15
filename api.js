@@ -15,6 +15,10 @@ class ApiService {
     return this.api.post("Pets/addPet", request);
   }
 
+  addPost(request) {
+    return this.api.post("Posts/addPost", request);
+  }
+
   addMoney(userId, amount) {
     return this.api.put(`Wallets/addAmount/${userId}`, { amount });
   }

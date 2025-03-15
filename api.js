@@ -55,6 +55,10 @@ class ApiService {
     return this.api.get(`Pets/getByUserId/${userId}`);
   }
 
+  getUserPosts(userId) {
+    return this.api.get(`Posts/getUserPosts/${userId}`);
+  }
+
   getUserPetCards(userId) {
     return this.api.get(`PetCards/userPetCards/${userId}`);
   }

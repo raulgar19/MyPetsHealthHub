@@ -47,7 +47,7 @@ const AddPostScreen = () => {
     if (description) {
       setLoading(true);
       try {
-        const imageUrl = null;
+        let imageUrl = null;
 
         if (selectedImage) {
           imageUrl = await uploadImageToCloudinary(selectedImage);

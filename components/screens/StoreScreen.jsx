@@ -24,6 +24,12 @@ const StoreScreen = () => {
   const productTypeId = 1;
 
   useEffect(() => {
+    // Cargar el carrito desde localStorage si hay datos
+    const storedCart = localStorage.getItem("storeCart");
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+
     const fetchWallet = async () => {
       try {
         const response = await apiService.getWalletByUserId(userId);
@@ -59,17 +65,26 @@ const StoreScreen = () => {
       const existingProduct = prevCart.find(
         (item) => item.id === selectedProduct.id
       );
+      let updatedCart;
       if (existingProduct) {
-        return prevCart.map((item) =>
+        updatedCart = prevCart.map((item) =>
           item.id === selectedProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        return [...prevCart, { ...selectedProduct, quantity }];
+        updatedCart = [...prevCart, { ...selectedProduct, quantity }];
       }
+
+      // Guardar el carrito en localStorage
+      localStorage.setItem("storeCart", JSON.stringify(updatedCart));
+      return updatedCart;
     });
     setModalVisible(false);
+  };
+
+  const chargeStoreCart = () => {
+    localStorage.setItem("storeCart", JSON.stringify(cart));
   };
 
   const renderProduct = ({ item }) => (
@@ -96,7 +111,7 @@ const StoreScreen = () => {
         </Link>
         <Text style={styles.navTitle}>Tienda</Text>
         <Link asChild href={"/cartStore"}>
-          <Pressable style={styles.cartButton}>
+          <Pressable style={styles.cartButton} onPress={chargeStoreCart}>
             <Image
               source={require("../../assets/icons/cart-icon.png")}
               style={styles.cartIcon}

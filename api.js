@@ -19,6 +19,10 @@ class ApiService {
     return this.api.put(`Wallets/addAmount/${userId}`, { amount });
   }
 
+  deductMoney(userId, amount) {
+    return this.api.put(`Wallets/deductAmount/${userId}`, { amount });
+  }
+
   addQuery(request) {
     return this.api.post("ScheduledQueries/addQuery", request);
   }

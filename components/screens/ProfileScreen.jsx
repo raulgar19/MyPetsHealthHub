@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ApiService from "../../api";
+import apiService from "../../api";
 
 const UserProfileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -21,6 +22,8 @@ const UserProfileScreen = () => {
   const opacityValue = useRef(new Animated.Value(0)).current;
 
   const userId = localStorage.getItem("userID");
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -71,10 +74,20 @@ const UserProfileScreen = () => {
     setModalVisible(true);
   };
 
-  const confirmDelete = () => {
-    animateCloseModal(() => {
+  const confirmDelete = async () => {
+    animateCloseModal(async () => {
       setModalVisible(false);
-      setFarewellModalVisible(true);
+
+      try {
+        await ApiService.deleteUser(userId);
+
+        localStorage.removeItem("userID");
+        userId = null;
+
+        setFarewellModalVisible(true);
+      } catch (error) {
+        console.error("Error eliminando la cuenta:", error);
+      }
     });
   };
 
@@ -185,16 +198,17 @@ const UserProfileScreen = () => {
               Lamentamos que te vayas. ¡Gracias por haber sido parte de nuestra
               comunidad!
             </Text>
-            <Link asChild href={"/"}>
-              <Pressable
-                style={[styles.modalButton, styles.confirmButton]}
-                onPress={() =>
-                  animateCloseModal(() => setFarewellModalVisible(false))
-                }
-              >
-                <Text style={styles.buttonText}>Cerrar</Text>
-              </Pressable>
-            </Link>
+            <Pressable
+              style={[styles.modalButton, styles.confirmButton]}
+              onPress={() => {
+                animateCloseModal(() => {
+                  setFarewellModalVisible(false);
+                  router.push("/");
+                });
+              }}
+            >
+              <Text style={styles.buttonText}>Cerrar</Text>
+            </Pressable>
           </Animated.View>
         </View>
       </Modal>
@@ -305,7 +319,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   confirmButton: {
-    backgroundColor: "#FF5252",
+    backgroundColor: "#006368",
   },
 });
 

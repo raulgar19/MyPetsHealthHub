@@ -132,6 +132,10 @@ class ApiService {
   deletePet(petId) {
     return this.api.delete(`Pets/deletePet/${petId}`);
   }
+
+  deleteUser(userId) {
+    return this.api.delete(`AppUsers/deleteUser/${userId}`);
+  }
 }
 
 const apiService = new ApiService();

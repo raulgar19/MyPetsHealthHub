@@ -9,23 +9,26 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const HomeScreen = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userID");
-    if (userId) {
-      apiService
-        .getUserById(userId)
-        .then((response) => {
+    const fetchUserData = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userID");
+        if (userId) {
+          const response = await apiService.getUserById(userId);
           setUserData(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
-    }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   return (

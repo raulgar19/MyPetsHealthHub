@@ -12,6 +12,7 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../api";
 
 const CartStoreScreen = () => {
@@ -20,15 +21,18 @@ const CartStoreScreen = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("storeCart");
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
-    }
+    const getStoredCart = async () => {
+      const storedCart = await AsyncStorage.getItem("storeCart");
+      if (storedCart) {
+        setCartItems(JSON.parse(storedCart));
+      }
+    };
+    getStoredCart();
   }, []);
 
-  const updateCartStorage = (updatedCart) => {
+  const updateCartStorage = async (updatedCart) => {
     setCartItems(updatedCart);
-    localStorage.setItem("storeCart", JSON.stringify(updatedCart));
+    await AsyncStorage.setItem("storeCart", JSON.stringify(updatedCart));
   };
 
   const calculateTotalPrice = () => {
@@ -48,7 +52,7 @@ const CartStoreScreen = () => {
   };
 
   const handleCheckout = async () => {
-    const userId = localStorage.getItem("userID");
+    const userId = await AsyncStorage.getItem("userID");
     const total = calculateTotalPrice();
 
     if (!userId) {

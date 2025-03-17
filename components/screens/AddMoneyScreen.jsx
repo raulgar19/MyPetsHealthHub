@@ -11,6 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const AddMoney = () => {
@@ -21,25 +22,31 @@ const AddMoney = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const handleAddMoney = async () => {
-    const userId = localStorage.getItem("userID");
-    const amountToAdd = parseFloat(amount);
-
-    if (isNaN(amountToAdd) || amountToAdd <= 0) {
-      setErrorMessage("Por favor, ingresa una cantidad válida.");
-      setModalVisible(true);
-      return;
-    }
-
     try {
+      const userId = await AsyncStorage.getItem("userID");
+      if (!userId) {
+        setErrorMessage("No se encontró el usuario.");
+        setModalVisible(true);
+        return;
+      }
+
+      const amountToAdd = parseFloat(amount);
+      if (isNaN(amountToAdd) || amountToAdd <= 0) {
+        setErrorMessage("Por favor, ingresa una cantidad válida.");
+        setModalVisible(true);
+        return;
+      }
+
       const response = await apiService.addMoney(userId, amountToAdd);
       if (response.status === 200) {
         setErrorMessage("¡Fondos añadidos con éxito!");
+      } else {
+        setErrorMessage("Error al añadir fondos. Inténtalo de nuevo.");
       }
-      setModalVisible(true);
     } catch (error) {
       setErrorMessage("Error al añadir fondos. Inténtalo de nuevo.");
-      setModalVisible(true);
     }
+    setModalVisible(true);
   };
 
   const closeModal = () => {

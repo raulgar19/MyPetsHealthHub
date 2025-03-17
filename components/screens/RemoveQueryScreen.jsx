@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RemoveQueryScreen = () => {
   const [queries, setQueries] = useState([]);
@@ -26,8 +27,8 @@ const RemoveQueryScreen = () => {
   useEffect(() => {
     const fetchPetData = async () => {
       try {
-        const petId = localStorage.getItem("petID");
-        const vetId = localStorage.getItem("userID");
+        const petId = await AsyncStorage.getItem("petID");
+        const vetId = await AsyncStorage.getItem("userID");
 
         if (!petId || !vetId) {
           setError("No se encontró el ID de la mascota o el veterinario.");

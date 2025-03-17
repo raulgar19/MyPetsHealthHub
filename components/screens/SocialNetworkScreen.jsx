@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ApiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SocialNetworkMobile = () => {
   const [posts, setPosts] = useState([]);
@@ -19,7 +20,7 @@ const SocialNetworkMobile = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const userId = localStorage.getItem("userID");
+        const userId = await AsyncStorage.getItem("userID");
         if (!userId) {
           console.error("No se encontró el userID en localStorage.");
           setLoading(false);

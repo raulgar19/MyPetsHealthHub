@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetCardScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,8 +25,8 @@ const PetCardScreen = () => {
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const fetchPetId = () => {
-      const petId = localStorage.getItem("petID");
+    const fetchPetId = async () => {
+      const petId = await AsyncStorage.getItem("petID");
       if (petId) {
         setPetId(petId);
       } else {

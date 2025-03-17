@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ApiService from "../../api";
-import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UserProfileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -21,17 +21,28 @@ const UserProfileScreen = () => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
 
-  const userId = localStorage.getItem("userID");
+  const [userId, setUserId] = useState(null);
 
   const router = useRouter();
 
   useEffect(() => {
+    const fetchUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userID");
+      setUserId(storedUserId);
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const response = await ApiService.getUserById(userId);
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      if (userId) {
+        try {
+          const response = await ApiService.getUserById(userId);
+          setUserData(response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
       }
     };
 
@@ -81,8 +92,8 @@ const UserProfileScreen = () => {
       try {
         await ApiService.deleteUser(userId);
 
-        localStorage.removeItem("userID");
-        userId = null;
+        await AsyncStorage.removeItem("userID");
+        setUserId(null);
 
         setFarewellModalVisible(true);
       } catch (error) {

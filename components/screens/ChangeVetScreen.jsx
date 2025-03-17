@@ -1,12 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Image, FlatList, Pressable, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import apiService from '../../api';
-import * as Linking from 'expo-linking';
+import React, { useEffect, useState } from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  Pressable,
+  TextInput,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
+import * as Linking from "expo-linking";
 
 const ChangeVetScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [veterinarios, setVeterinarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +28,7 @@ const ChangeVetScreen = () => {
         const response = await apiService.getAllVets();
         setVeterinarios(response.data);
       } catch (err) {
-        setError('Error al cargar la lista de veterinarios');
+        setError("Error al cargar la lista de veterinarios");
       } finally {
         setLoading(false);
       }
@@ -28,11 +39,11 @@ const ChangeVetScreen = () => {
 
   const handlePress = (item) => {
     if (item.link) {
-      if (Platform.OS === 'web') {
-        window.open(item.link, '_blank');
+      if (Platform.OS === "web") {
+        window.open(item.link, "_blank");
       } else {
         Linking.openURL(item.link).catch(() => {
-          Alert.alert('Error', 'No se pudo abrir el enlace de Google Maps.');
+          Alert.alert("Error", "No se pudo abrir el enlace de Google Maps.");
         });
       }
     }
@@ -50,13 +61,19 @@ const ChangeVetScreen = () => {
       <View style={styles.navbar}>
         <Link asChild href={"/home"}>
           <Pressable>
-            <Image source={require('../../assets/icons/logo-mobile.png')} style={styles.logo} />
+            <Image
+              source={require("../../assets/icons/logo-mobile.png")}
+              style={styles.logo}
+            />
           </Pressable>
         </Link>
         <Text style={styles.navTitle}>Veterinarios</Text>
         <Link asChild href={"/profile"}>
           <Pressable>
-            <Image source={require('../../assets/icons/profile-icon.png')} style={styles.profileIcon} />
+            <Image
+              source={require("../../assets/icons/profile-icon.png")}
+              style={styles.profileIcon}
+            />
           </Pressable>
         </Link>
       </View>
@@ -74,14 +91,16 @@ const ChangeVetScreen = () => {
         <Text style={styles.errorText}>{error}</Text>
       ) : (
         <FlatList
-          data={veterinarios.filter(vet =>
+          data={veterinarios.filter((vet) =>
             vet.name.toLowerCase().includes(searchQuery.toLowerCase())
           )}
           renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item) => item.id.toString()}
           style={styles.list}
           contentContainerStyle={styles.listContent}
-          ListEmptyComponent={<Text style={styles.noResults}>No se encontraron veterinarios</Text>}
+          ListEmptyComponent={
+            <Text style={styles.noResults}>No se encontraron veterinarios</Text>
+          }
         />
       )}
     </SafeAreaView>
@@ -91,15 +110,15 @@ const ChangeVetScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   logo: {
@@ -107,9 +126,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   profileIcon: {
     width: 40,
@@ -119,11 +138,11 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 16,
     borderWidth: 1,
-    borderColor: '#009688',
+    borderColor: "#009688",
     borderRadius: 8,
     paddingLeft: 10,
     fontSize: 16,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   list: {
     flex: 1,
@@ -132,42 +151,42 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   listItem: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
     borderRadius: 8,
     marginHorizontal: 10,
     marginVertical: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.5,
     elevation: 3,
-    alignItems: 'center',
+    alignItems: "center",
   },
   itemTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   itemAddress: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
   },
   loader: {
     marginTop: 20,
   },
   errorText: {
-    textAlign: 'center',
-    color: 'red',
+    textAlign: "center",
+    color: "red",
     marginTop: 20,
     fontSize: 16,
   },
   noResults: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
 });
 

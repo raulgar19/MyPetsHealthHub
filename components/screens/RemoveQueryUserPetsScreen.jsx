@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RemoveQueryUserPetsScreen = () => {
   const [pets, setPets] = useState([]);
@@ -21,7 +22,7 @@ const RemoveQueryUserPetsScreen = () => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const ownerId = localStorage.getItem("ownerID");
+        const ownerId = await AsyncStorage.getItem("ownerID");
         if (!ownerId) {
           setError("No se encontró el ID del dueño en el almacenamiento.");
           setLoading(false);
@@ -49,8 +50,8 @@ const RemoveQueryUserPetsScreen = () => {
     pet.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectPet = (petID) => {
-    localStorage.setItem("petID", petID);
+  const handleSelectPet = async (petID) => {
+    await AsyncStorage.setItem("petID", petID);
   };
 
   const renderItem = ({ item }) => (

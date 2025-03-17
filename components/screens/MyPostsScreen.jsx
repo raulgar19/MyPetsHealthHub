@@ -11,14 +11,24 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ApiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MyPostsScreen = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const userId = localStorage.getItem("userID");
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userID");
+      setUserId(storedUserId);
+    };
+    getUserId();
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {
+      if (!userId) return;
       try {
         const response = await ApiService.getUserPosts(userId);
         setUserPosts(response.data || []);
@@ -30,8 +40,10 @@ const MyPostsScreen = () => {
       }
     };
 
-    fetchPosts();
-  }, []);
+    if (userId) {
+      fetchPosts();
+    }
+  }, [userId]);
 
   const renderPostItem = ({ item }) => (
     <View style={styles.postItem}>

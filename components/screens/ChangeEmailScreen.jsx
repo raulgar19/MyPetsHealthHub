@@ -11,6 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const ChangeEmailScreen = () => {
@@ -21,7 +22,15 @@ const ChangeEmailScreen = () => {
 
   const router = useRouter();
 
-  const userId = localStorage.getItem("userID");
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userID");
+      setUserId(storedUserId);
+    };
+    getUserId();
+  }, []);
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
@@ -40,11 +49,17 @@ const ChangeEmailScreen = () => {
       return;
     }
 
-    await apiService.changeEmail(userId, { email: email });
+    if (userId) {
+      await apiService.changeEmail(userId, { email: email });
 
-    setModalMessage("El correo electrónico se ha actualizado correctamente.");
-    setConfirmModalVisible(true);
-    showModal();
+      setModalMessage("El correo electrónico se ha actualizado correctamente.");
+      setConfirmModalVisible(true);
+      showModal();
+    } else {
+      setModalMessage("No se encontró el usuario.");
+      setConfirmModalVisible(true);
+      showModal();
+    }
   };
 
   const showModal = () => {

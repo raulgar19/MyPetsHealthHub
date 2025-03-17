@@ -10,6 +10,7 @@ import {
   Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../api";
 
 const CartPharmacyScreen = () => {
@@ -17,39 +18,36 @@ const CartPharmacyScreen = () => {
   const [parapharmacyCartItems, setParapharmacyCartItems] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Pharmacy");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const pharmacyItems =
-      JSON.parse(localStorage.getItem("pharmacyCart")) || [];
-    const parapharmacyItems =
-      JSON.parse(localStorage.getItem("parapharmacyCart")) || [];
-    setPharmacyCartItems(pharmacyItems);
-    setParapharmacyCartItems(parapharmacyItems);
+    const getCartItems = async () => {
+      const pharmacyItems = await AsyncStorage.getItem("pharmacyCart");
+      const parapharmacyItems = await AsyncStorage.getItem("parapharmacyCart");
+      setPharmacyCartItems(pharmacyItems ? JSON.parse(pharmacyItems) : []);
+      setParapharmacyCartItems(
+        parapharmacyItems ? JSON.parse(parapharmacyItems) : []
+      );
+    };
+
+    getCartItems();
   }, []);
 
-  const increaseQuantity = (itemId, items, setItems) => {
+  const updateQuantity = (itemId, direction, items, setItems) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
-
-  const decreaseQuantity = (itemId, items, setItems) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
+        item.id === itemId
+          ? { ...item, quantity: Math.max(item.quantity + direction, 1) }
           : item
       )
     );
   };
 
-  const removeItem = (itemId, items, setItems) => {
+  const removeItem = async (itemId, items, setItems) => {
     const updatedItems = items.filter((item) => item.id !== itemId);
     setItems(updatedItems);
-    localStorage.setItem(
+    await AsyncStorage.setItem(
       selectedTab === "Pharmacy" ? "pharmacyCart" : "parapharmacyCart",
       JSON.stringify(updatedItems)
     );
@@ -67,7 +65,7 @@ const CartPharmacyScreen = () => {
         ? calculateTotalPrice(pharmacyCartItems)
         : calculateTotalPrice(parapharmacyCartItems);
 
-    const userId = localStorage.getItem("userID");
+    const userId = await AsyncStorage.getItem("userID");
 
     try {
       await ApiService.deductMoney(userId, totalAmount);
@@ -75,15 +73,16 @@ const CartPharmacyScreen = () => {
 
       if (selectedTab === "Pharmacy") {
         setPharmacyCartItems([]);
-        localStorage.setItem("pharmacyCart", JSON.stringify([]));
+        await AsyncStorage.setItem("pharmacyCart", JSON.stringify([]));
       } else {
         setParapharmacyCartItems([]);
-        localStorage.setItem("parapharmacyCart", JSON.stringify([]));
+        await AsyncStorage.setItem("parapharmacyCart", JSON.stringify([]));
       }
 
       setIsModalVisible(true);
     } catch (error) {
       console.error("Error al realizar la compra", error);
+      setErrorMessage("Error al procesar el pago. Intenta nuevamente.");
     }
   };
 
@@ -97,8 +96,9 @@ const CartPharmacyScreen = () => {
           <Pressable
             style={styles.quantityButton}
             onPress={() =>
-              decreaseQuantity(
+              updateQuantity(
                 item.id,
+                -1,
                 selectedTab === "Pharmacy"
                   ? pharmacyCartItems
                   : parapharmacyCartItems,
@@ -114,8 +114,9 @@ const CartPharmacyScreen = () => {
           <Pressable
             style={styles.quantityButton}
             onPress={() =>
-              increaseQuantity(
+              updateQuantity(
                 item.id,
+                1,
                 selectedTab === "Pharmacy"
                   ? pharmacyCartItems
                   : parapharmacyCartItems,

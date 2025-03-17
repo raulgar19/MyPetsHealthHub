@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageToCloudinary } from "../../cloudinary";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AddPostScreen = () => {
   const [description, setContent] = useState("");
@@ -27,7 +28,16 @@ const AddPostScreen = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [fadeAnim] = useState(new Animated.Value(0));
 
-  const userId = localStorage.getItem("userID");
+  const [userId, setUserId] = useState(null);
+
+  const fetchUserId = async () => {
+    const storedUserId = await AsyncStorage.getItem("userID");
+    setUserId(storedUserId);
+  };
+
+  React.useEffect(() => {
+    fetchUserId();
+  }, []);
 
   const handleChooseImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

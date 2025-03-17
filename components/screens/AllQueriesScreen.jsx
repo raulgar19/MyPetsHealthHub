@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, Pressable, Image, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import apiService from '../../api';
+import React, { useState, useEffect } from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Image,
+  FlatList,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AllQueriesScreen = () => {
   const [appointments, setAppointments] = useState([]);
@@ -10,20 +18,20 @@ const AllQueriesScreen = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem('userID');
-    if (!userId) {
-      setError('Veterinario no encontrado');
-      setLoading(false);
-      return;
-    }
-
     const fetchAppointments = async () => {
       try {
+        const userId = await AsyncStorage.getItem("userID");
+        if (!userId) {
+          setError("Veterinario no encontrado");
+          setLoading(false);
+          return;
+        }
+
         const response = await apiService.getVetQueries(userId);
         setAppointments(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar las citas');
+        setError("Error al cargar las citas");
         setLoading(false);
       }
     };
@@ -35,7 +43,10 @@ const AllQueriesScreen = () => {
     <View style={styles.appointment}>
       <Text style={styles.petName}>{item.pet.name}</Text>
       <Text style={styles.details}>
-        Propietario: <Text style={styles.bold}>{item.pet.appUser.name + " " + item.pet.appUser.surnames}</Text>
+        Propietario:{" "}
+        <Text style={styles.bold}>
+          {item.pet.appUser.name + " " + item.pet.appUser.surnames}
+        </Text>
       </Text>
       <Text style={styles.details}>
         Fecha: <Text style={styles.bold}>{item.date}</Text>
@@ -69,7 +80,7 @@ const AllQueriesScreen = () => {
         <Link asChild href="/vetHome" style={styles.link}>
           <Pressable>
             <Image
-              source={require('../../assets/icons/logo-mobile.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
               style={styles.logo}
             />
           </Pressable>
@@ -83,7 +94,9 @@ const AllQueriesScreen = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.container}
-        ListEmptyComponent={<Text style={styles.noAppointments}>No hay citas disponibles</Text>}
+        ListEmptyComponent={
+          <Text style={styles.noAppointments}>No hay citas disponibles</Text>
+        }
       />
     </SafeAreaView>
   );
@@ -92,19 +105,19 @@ const AllQueriesScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   link: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
   },
   logo: {
@@ -113,61 +126,61 @@ const styles = StyleSheet.create({
   },
   navTextContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   container: {
     padding: 16,
   },
   appointment: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: 16,
     marginVertical: 8,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
     borderLeftWidth: 4,
-    borderLeftColor: '#009688',
+    borderLeftColor: "#009688",
   },
   petName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    color: '#006368',
+    color: "#006368",
   },
   details: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
     marginBottom: 4,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   noAppointments: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   loadingText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   errorText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: '#D9534F',
+    color: "#D9534F",
   },
 });
 

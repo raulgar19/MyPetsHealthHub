@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import ApiService from "../../api";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RemovePetMobile = () => {
   const [selectedPetId, setSelectedPetId] = useState(null);
@@ -23,16 +24,19 @@ const RemovePetMobile = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const userId = localStorage.getItem("userID");
-    if (userId) {
-      ApiService.getUserPets(userId)
-        .then((response) => {
+    const fetchPets = async () => {
+      const userId = await AsyncStorage.getItem("userID");
+      if (userId) {
+        try {
+          const response = await ApiService.getUserPets(userId);
           setPets(response.data);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error al obtener las mascotas:", error);
-        });
-    }
+        }
+      }
+    };
+
+    fetchPets();
   }, []);
 
   const handleDeletePress = () => {
@@ -45,30 +49,23 @@ const RemovePetMobile = () => {
     }
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedPetId) {
-      ApiService.deletePet(selectedPetId)
-        .then(() => {
-          const userId = localStorage.getItem("userID");
-          if (userId) {
-            ApiService.getUserPets(userId)
-              .then((response) => {
-                setPets(response.data);
-              })
-              .catch((error) => {
-                console.error(
-                  "Error al obtener las mascotas después de eliminar:",
-                  error
-                );
-              });
-          }
-          setShowConfirmationModal(false);
-          setSelectedPetId(null);
-          router.push("/home");
-        })
-        .catch((error) => {
-          console.error("Error al eliminar la mascota:", error);
-        });
+      try {
+        await ApiService.deletePet(selectedPetId);
+        const userId = await AsyncStorage.getItem("userID");
+
+        if (userId) {
+          const response = await ApiService.getUserPets(userId);
+          setPets(response.data);
+        }
+
+        setShowConfirmationModal(false);
+        setSelectedPetId(null);
+        router.push("/home");
+      } catch (error) {
+        console.error("Error al eliminar la mascota:", error);
+      }
     }
   };
 

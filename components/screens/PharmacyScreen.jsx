@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PharmacyScreen = () => {
   const [selectedTab, setSelectedTab] = useState("Pharmacy");
@@ -23,7 +24,7 @@ const PharmacyScreen = () => {
   const [pharmacyProducts, setPharmacyProducts] = useState([]);
   const [parapharmacyProducts, setParapharmacyProducts] = useState([]);
 
-  const userId = localStorage.getItem("userID");
+  const userId = AsyncStorage.getItem("userID");
 
   useEffect(() => {
     const fetchWallet = async () => {
@@ -59,16 +60,22 @@ const PharmacyScreen = () => {
   }, [userId]);
 
   useEffect(() => {
-    const storedPharmacyCart = localStorage.getItem("pharmacyCart");
-    const storedParapharmacyCart = localStorage.getItem("parapharmacyCart");
+    const fetchCart = async () => {
+      const storedPharmacyCart = await AsyncStorage.getItem("pharmacyCart");
+      const storedParapharmacyCart = await AsyncStorage.getItem(
+        "parapharmacyCart"
+      );
 
-    if (storedPharmacyCart) {
-      setPharmacyCart(JSON.parse(storedPharmacyCart));
-    }
+      if (storedPharmacyCart) {
+        setPharmacyCart(JSON.parse(storedPharmacyCart));
+      }
 
-    if (storedParapharmacyCart) {
-      setParapharmacyCart(JSON.parse(storedParapharmacyCart));
-    }
+      if (storedParapharmacyCart) {
+        setParapharmacyCart(JSON.parse(storedParapharmacyCart));
+      }
+    };
+
+    fetchCart();
   }, []);
 
   const openProductModal = (product) => {
@@ -113,9 +120,12 @@ const PharmacyScreen = () => {
     </Pressable>
   );
 
-  const saveCartToLocalStorage = () => {
-    localStorage.setItem("pharmacyCart", JSON.stringify(pharmacyCart));
-    localStorage.setItem("parapharmacyCart", JSON.stringify(parapharmacyCart));
+  const saveCartToLocalStorage = async () => {
+    await AsyncStorage.setItem("pharmacyCart", JSON.stringify(pharmacyCart));
+    await AsyncStorage.setItem(
+      "parapharmacyCart",
+      JSON.stringify(parapharmacyCart)
+    );
   };
 
   return (

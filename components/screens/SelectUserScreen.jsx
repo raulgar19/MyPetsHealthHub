@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SelectUserScreen = () => {
   const [clients, setClients] = useState([]);
@@ -23,7 +24,7 @@ const SelectUserScreen = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const vetId = parseInt(localStorage.getItem("userID"), 10);
+        const vetId = parseInt(await AsyncStorage.getItem("userID"), 10);
         if (!vetId) {
           setError(
             "No se encontró el ID del veterinario en el almacenamiento."
@@ -49,9 +50,9 @@ const SelectUserScreen = () => {
     setSearchQuery(text);
   };
 
-  const handleSelectClient = (item) => {
-    localStorage.setItem("ownerID", item.id);
-    router.push("/selectPet"); // Redirige a la pantalla de selección de mascota
+  const handleSelectClient = async (item) => {
+    await AsyncStorage.setItem("ownerID", item.id);
+    router.push("/selectPet");
   };
 
   const filteredClients = clients.filter((client) =>

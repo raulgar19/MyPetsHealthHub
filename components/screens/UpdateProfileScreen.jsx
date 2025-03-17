@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UpdateProfileScreen = () => {
   const [userData, setUserData] = useState(null);
@@ -30,8 +31,16 @@ const UpdateProfileScreen = () => {
   const [scaleValue] = useState(new Animated.Value(0));
   const [opacityValue] = useState(new Animated.Value(0));
 
-  const userId = localStorage.getItem("userID");
+  const userId = null;
   const router = useRouter();
+
+  useEffect(() => {
+    getUserId();
+  });
+
+  const getUserId = async () => {
+    userId = await AsyncStorage.getItem("userID");
+  };
 
   const handleSaveChanges = async () => {
     try {

@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
 import ApiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetsManagementScreen = () => {
   const [selectedTab, setSelectedTab] = useState("Pets");
@@ -23,7 +24,7 @@ const PetsManagementScreen = () => {
   useEffect(() => {
     const fetchPetsData = async () => {
       try {
-        const userId = localStorage.getItem("userID");
+        const userId = await AsyncStorage.getItem("userID");
         if (!userId) {
           setError("No se encontró el usuario.");
           setLoading(false);
@@ -43,8 +44,8 @@ const PetsManagementScreen = () => {
     fetchPetsData();
   }, []);
 
-  const setPetId = (petId) => () => {
-    localStorage.setItem("petID", petId);
+  const setPetId = (petId) => async () => {
+    await AsyncStorage.setItem("petID", petId);
   };
 
   return (

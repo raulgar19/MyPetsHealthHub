@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetDetailsScreen = () => {
   const [petId, setPetId] = useState(null);
@@ -19,9 +20,8 @@ const PetDetailsScreen = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Obtener el petId desde localStorage
-    const fetchPetId = () => {
-      const storedPetId = localStorage.getItem("petID");
+    const fetchPetId = async () => {
+      const storedPetId = await AsyncStorage.getItem("petID");
       if (storedPetId) {
         setPetId(storedPetId);
       } else {

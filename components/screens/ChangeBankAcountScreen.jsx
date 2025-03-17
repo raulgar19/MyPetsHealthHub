@@ -11,6 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const ChangeBankAcountScreen = () => {
@@ -21,7 +22,7 @@ const ChangeBankAcountScreen = () => {
 
   const router = useRouter();
 
-  const userId = localStorage.getItem("userID");
+  const userId = AsyncStorage.getItem("userID");
 
   const handleSaveChanges = async () => {
     if (bankAccount === "") {
@@ -31,11 +32,19 @@ const ChangeBankAcountScreen = () => {
       return;
     }
 
-    await apiService.changeBankAccount(userId, { bankAccount });
+    const userId = await AsyncStorage.getItem("userID");
 
-    setModalMessage("El número de cuenta se ha actualizado correctamente.");
-    setConfirmModalVisible(true);
-    showModal();
+    if (userId) {
+      await apiService.changeBankAccount(userId, { bankAccount });
+
+      setModalMessage("El número de cuenta se ha actualizado correctamente.");
+      setConfirmModalVisible(true);
+      showModal();
+    } else {
+      setModalMessage("No se encontró el usuario.");
+      setConfirmModalVisible(true);
+      showModal();
+    }
   };
 
   const showModal = () => {

@@ -1,24 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, Pressable, Image, TextInput, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import apiService from '../../api';
+import React, { useState, useEffect } from "react";
+import { Link } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Image,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetsVetScreen = () => {
   const [pets, setPets] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [userID, setUserID] = useState(null);
 
   useEffect(() => {
-    const fetchUserID = () => {
+    const fetchUserID = async () => {
       try {
-        const storedUserID = localStorage.getItem('userID');
+        const storedUserID = await AsyncStorage.getItem("userID");
         if (storedUserID) {
           setUserID(storedUserID);
         }
       } catch (error) {
-        console.error('Error obteniendo userID:', error);
+        console.error("Error obteniendo userID:", error);
       }
     };
 
@@ -34,7 +44,7 @@ const PetsVetScreen = () => {
         const response = await apiService.getPetsByVetId(userID);
         setPets(response.data);
       } catch (error) {
-        console.error('Error fetching pets:', error);
+        console.error("Error fetching pets:", error);
       } finally {
         setLoading(false);
       }
@@ -47,7 +57,7 @@ const PetsVetScreen = () => {
     setSearchQuery(text);
   };
 
-  const filteredPets = pets.filter(pet =>
+  const filteredPets = pets.filter((pet) =>
     pet.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -69,7 +79,7 @@ const PetsVetScreen = () => {
         <Link asChild href="/vetHome" style={styles.link}>
           <Pressable>
             <Image
-              source={require('../../assets/icons/logo-mobile.png')}
+              source={require("../../assets/icons/logo-mobile.png")}
               style={styles.logo}
             />
           </Pressable>
@@ -103,19 +113,19 @@ const PetsVetScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   navbar: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   link: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
   },
   logo: {
@@ -124,18 +134,18 @@ const styles = StyleSheet.create({
   },
   navTextContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchBar: {
     height: 40,
-    borderColor: '#006368',
-    backgroundColor: 'white',
+    borderColor: "#006368",
+    backgroundColor: "white",
     borderWidth: 1,
     marginHorizontal: 20,
     marginVertical: 20,
@@ -147,7 +157,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   pet: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: 16,
     marginVertical: 8,
     borderRadius: 10,
@@ -155,7 +165,7 @@ const styles = StyleSheet.create({
   },
   petName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   details: {
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   loader: {
     marginTop: 20,

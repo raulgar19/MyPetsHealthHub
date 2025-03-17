@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RemoveQueryUsersScreen = () => {
   const [clients, setClients] = useState([]);
@@ -19,29 +20,30 @@ const RemoveQueryUsersScreen = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userID");
-    if (!userId) {
-      setError("Veterinario no encontrado");
-      setLoading(false);
-      return;
-    }
-
-    const fetchClients = async () => {
+    const fetchData = async () => {
       try {
+        const userId = await AsyncStorage.getItem("userID");
+
+        if (!userId) {
+          setError("Veterinario no encontrado");
+          setLoading(false);
+          return;
+        }
+
         const response = await apiService.getUsersByVetId(userId);
         setClients(response.data);
-        setLoading(false);
       } catch (err) {
         setError("Error al cargar los clientes");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchClients();
+    fetchData();
   }, []);
 
-  const keepOwner = (id) => {
-    localStorage.setItem("ownerID", id);
+  const keepOwner = async (id) => {
+    await AsyncStorage.setItem("ownerID", id);
   };
 
   const handleSearch = (text) => {

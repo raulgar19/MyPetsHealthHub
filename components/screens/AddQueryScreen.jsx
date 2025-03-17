@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -37,7 +38,7 @@ const AddQueryScreen = () => {
   useEffect(() => {
     const fetchPet = async () => {
       try {
-        const petID = await localStorage.getItem("petID");
+        const petID = await AsyncStorage.getItem("petID");
         if (petID) {
           const response = await apiService.getPetById(petID);
           setPet(response.data);
@@ -70,8 +71,8 @@ const AddQueryScreen = () => {
         requiredActions: requiredActions,
         preInstructions: preInstructions,
         postActions: postActions,
-        petId: localStorage.getItem("petID"),
-        vetId: localStorage.getItem("userID"),
+        petId: await AsyncStorage.getItem("petID"),
+        vetId: await AsyncStorage.getItem("userID"),
       };
 
       await apiService.addQuery(addQueryModel);

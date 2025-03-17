@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StoreScreen = () => {
   const [products, setProducts] = useState([]);
@@ -20,39 +21,36 @@ const StoreScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [balance, setBalance] = useState(null);
 
-  const userId = localStorage.getItem("userID");
+  const userId = null;
   const productTypeId = 1;
 
+  const getUserId = async () => {
+    userId = await AsyncStorage.getItem("userID");
+  };
+
   useEffect(() => {
-    // Cargar el carrito desde localStorage si hay datos
-    const storedCart = localStorage.getItem("storeCart");
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
-
-    const fetchWallet = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiService.getWalletByUserId(userId);
-        setBalance(response.data.balance);
-      } catch (error) {
-        console.error("Error al obtener el saldo:", error);
-      }
-    };
+        const storedCart = await AsyncStorage.getItem("storeCart");
+        if (storedCart) {
+          setCart(JSON.parse(storedCart));
+        }
 
-    const fetchProducts = async () => {
-      try {
-        const response = await apiService.getProductsByProductTypeId(
+        const responseWallet = await apiService.getWalletByUserId(userId);
+        setBalance(responseWallet.data.balance);
+
+        const responseProducts = await apiService.getProductsByProductTypeId(
           productTypeId
         );
-        setProducts(response.data);
+        setProducts(responseProducts.data);
       } catch (error) {
-        console.error("Error al obtener los productos:", error);
+        console.error("Error al cargar los datos:", error);
       }
     };
 
-    fetchWallet();
-    fetchProducts();
-  }, [userId]);
+    fetchData();
+    getUserId();
+  }, [userId, productTypeId]);
 
   const openProductModal = (product) => {
     setSelectedProduct(product);
@@ -76,15 +74,14 @@ const StoreScreen = () => {
         updatedCart = [...prevCart, { ...selectedProduct, quantity }];
       }
 
-      // Guardar el carrito en localStorage
-      localStorage.setItem("storeCart", JSON.stringify(updatedCart));
+      AsyncStorage.setItem("storeCart", JSON.stringify(updatedCart));
       return updatedCart;
     });
     setModalVisible(false);
   };
 
-  const chargeStoreCart = () => {
-    localStorage.setItem("storeCart", JSON.stringify(cart));
+  const chargeStoreCart = async () => {
+    await AsyncStorage.setItem("storeCart", JSON.stringify(cart));
   };
 
   const renderProduct = ({ item }) => (

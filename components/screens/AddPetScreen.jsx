@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "expo-router";
 import {
   StyleSheet,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const convertDateFormat = (dateStr) => {
@@ -34,8 +35,26 @@ const AddPetScreen = () => {
     weight: "",
     notes: "",
     lastVaccineDate: "",
-    userId: parseInt(localStorage.getItem("userID"), 10),
+    userId: null, // Inicializado como null
   });
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userID");
+        if (userId) {
+          setPetData((prevData) => ({
+            ...prevData,
+            userId: parseInt(userId, 10),
+          }));
+        }
+      } catch (error) {
+        console.error("Error al obtener el userID de AsyncStorage:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   const handleSpeciesChange = (text) => {
     setShowVaccineField(text.toLowerCase() === "perro");

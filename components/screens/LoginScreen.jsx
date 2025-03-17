@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Pressable, TextInput, ScrollView, Image, Modal, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useRouter } from 'expo-router';
-import apiService from '../../api';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  TextInput,
+  ScrollView,
+  Image,
+  Modal,
+  Animated,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Link, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiService from "../../api";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalScale] = useState(new Animated.Value(0));
   const [modalOpacity] = useState(new Animated.Value(0));
@@ -51,8 +62,8 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setEmailError('Por favor, ingresa un correo electrónico o usuario.');
-      setPasswordError('Por favor, ingresa una contraseña.');
+      setEmailError("Por favor, ingresa un correo electrónico o usuario.");
+      setPasswordError("Por favor, ingresa una contraseña.");
       showModal();
       return;
     }
@@ -64,16 +75,15 @@ const LoginScreen = () => {
         : await apiService.userLogin(trimmedEmail, password);
 
       if (response.status === 200) {
-        localStorage.setItem(
-          'userID',
-          response.data.id
-        )
-        const navigationPath = adminRegex.test(trimmedEmail) ? '/vetHome' : '/home';
+        await AsyncStorage.setItem("userID", response.data.id.toString());
+        const navigationPath = adminRegex.test(trimmedEmail)
+          ? "/vetHome"
+          : "/home";
         router.push(navigationPath);
       }
     } catch (error) {
-      setEmailError('Correo o contraseña incorrectos.');
-      setPasswordError('');
+      setEmailError("Correo o contraseña incorrectos.");
+      setPasswordError("");
       showModal();
     }
   };
@@ -82,7 +92,7 @@ const LoginScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
         <Image
-          source={require('../../assets/icons/logo-mobile.png')}
+          source={require("../../assets/icons/logo-mobile.png")}
           style={styles.navLogo}
         />
         <Text style={styles.navTitle}>My Pet's Health Hub</Text>
@@ -97,8 +107,11 @@ const LoginScreen = () => {
             value={email}
             onChangeText={(text) => {
               setEmail(text.trim());
-              if (emailRegex.test(text.trim()) || adminRegex.test(text.trim())) {
-                setEmailError('');
+              if (
+                emailRegex.test(text.trim()) ||
+                adminRegex.test(text.trim())
+              ) {
+                setEmailError("");
               }
             }}
           />
@@ -118,7 +131,9 @@ const LoginScreen = () => {
             <Pressable
               style={styles.button}
               onPress={() => {
-                setEmailError('Por favor, ingrese un correo electrónico o usuario válido.');
+                setEmailError(
+                  "Por favor, ingrese un correo electrónico o usuario válido."
+                );
                 showModal();
               }}
             >
@@ -141,10 +156,7 @@ const LoginScreen = () => {
           <Animated.View
             style={[
               styles.modalContent,
-              {
-                transform: [{ scale: modalScale }],
-                opacity: modalOpacity,
-              },
+              { transform: [{ scale: modalScale }], opacity: modalOpacity },
             ]}
           >
             <Text style={styles.modalTitle}>Error</Text>
@@ -162,107 +174,107 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
     paddingBottom: 50,
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
   },
   navLogo: {
     width: 40,
     height: 40,
-    position: 'absolute',
+    position: "absolute",
     left: 20,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   innerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 20,
   },
   input: {
-    width: '70%',
+    width: "70%",
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
-    borderColor: '#006368',
+    borderColor: "#006368",
     borderWidth: 1,
   },
   button: {
-    backgroundColor: '#009688',
-    width: '50%',
+    backgroundColor: "#009688",
+    width: "50%",
     paddingVertical: 10,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   link: {
     fontSize: 16,
     marginVertical: 5,
-    color: '#006368',
-    textDecorationLine: 'underline',
-    textAlign: 'center',
+    color: "#006368",
+    textDecorationLine: "underline",
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    width: '80%',
+    alignItems: "center",
+    width: "80%",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
     marginBottom: 10,
   },
   modalText: {
     fontSize: 16,
-    textAlign: 'center',
-    color: '#000',
+    textAlign: "center",
+    color: "#000",
     marginBottom: 20,
   },
   closeButton: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
     paddingVertical: 10,
     borderRadius: 5,
-    alignItems: 'center',
-    width: '50%',
+    alignItems: "center",
+    width: "50%",
   },
   closeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
 });

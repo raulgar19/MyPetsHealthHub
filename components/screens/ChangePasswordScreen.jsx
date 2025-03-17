@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useRouter } from "expo-router";
 import {
   View,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
 
 const ChangePasswordScreen = () => {
@@ -21,7 +22,16 @@ const ChangePasswordScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const userId = localStorage.getItem("userID");
+  const [userId, setUserId] = useState(null);
+
+  // Obtener el userID de AsyncStorage
+  useEffect(() => {
+    const getUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userID");
+      setUserId(storedUserId);
+    };
+    getUserId();
+  }, []);
 
   const router = useRouter();
 
@@ -44,11 +54,17 @@ const ChangePasswordScreen = () => {
       return;
     }
 
-    await apiService.changePassword(userId, { password: password });
+    if (userId) {
+      await apiService.changePassword(userId, { password: password });
 
-    setModalMessage("La contraseña se ha actualizado correctamente.");
-    setConfirmModalVisible(true);
-    showModal();
+      setModalMessage("La contraseña se ha actualizado correctamente.");
+      setConfirmModalVisible(true);
+      showModal();
+    } else {
+      setModalMessage("No se encontró el usuario.");
+      setConfirmModalVisible(true);
+      showModal();
+    }
   };
 
   const showModal = () => {

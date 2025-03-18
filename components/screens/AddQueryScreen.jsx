@@ -64,8 +64,20 @@ const AddQueryScreen = () => {
     }
 
     try {
+      const dateParts = date.split("/");
+      if (dateParts.length !== 3) {
+        throw new Error("Formato de fecha inválido");
+      }
+
+      const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+      const parsedDate = new Date(formattedDate);
+
+      if (isNaN(parsedDate.getTime())) {
+        throw new Error("Fecha inválida");
+      }
+
       const addQueryModel = {
-        date: new Date(date).toISOString(),
+        date: parsedDate.toISOString(),
         hour: `${hour}:00`,
         purpose: purpose,
         requiredActions: requiredActions,
@@ -79,7 +91,7 @@ const AddQueryScreen = () => {
       console.log("Consulta guardada correctamente.");
       router.push("/vetHome");
     } catch (error) {
-      console.error("Error al guardar la consulta:", error);
+      console.error("Error al guardar la consulta:", error.message);
     }
   };
 

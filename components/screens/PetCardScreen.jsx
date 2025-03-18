@@ -97,7 +97,7 @@ const PetCardScreen = () => {
             />
           </Pressable>
         </Link>
-        <Text style={styles.navTitle}>Añadir Mascota</Text>
+        <Text style={styles.navTitle}>Tarjeta Sanitaria</Text>
         <Link asChild href={"/profile"}>
           <Pressable>
             <Image

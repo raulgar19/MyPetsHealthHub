@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -165,84 +166,168 @@ const HomeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  innerContainer: {
-    alignItems: "center",
-    flexGrow: 1,
-    justifyContent: "flex-start",
-    paddingBottom: 20,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-  },
-  categoryTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "left",
-    marginVertical: 10,
-    width: "100%",
-    color: "#006368",
-  },
-  menuContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  menuItem: {
-    backgroundColor: "#009688",
-    width: "48%",
-    aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  menuIcon: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
-  },
-  menuText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        container: {
+          flexGrow: 1,
+          justifyContent: "center",
+          paddingHorizontal: 20,
+        },
+        innerContainer: {
+          alignItems: "center",
+          flexGrow: 1,
+          justifyContent: "flex-start",
+          paddingBottom: 20,
+        },
+        title: {
+          fontSize: 30,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginVertical: 20,
+        },
+        categoryTitle: {
+          fontSize: 24,
+          fontWeight: "bold",
+          textAlign: "left",
+          marginVertical: 10,
+          width: "100%",
+          color: "#006368",
+        },
+        menuContainer: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        menuItem: {
+          backgroundColor: "#009688",
+          width: "48%",
+          aspectRatio: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 10,
+          marginBottom: 15,
+        },
+        menuIcon: {
+          width: 50,
+          height: 50,
+          marginBottom: 10,
+        },
+        menuText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "600",
+          textAlign: "center",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        container: {
+          flexGrow: 1,
+          justifyContent: "center",
+          paddingHorizontal: 20,
+          marginHorizontal: "20%",
+        },
+        innerContainer: {
+          alignItems: "center",
+          flexGrow: 1,
+          justifyContent: "flex-start",
+          paddingBottom: 20,
+        },
+        title: {
+          fontSize: 30,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginVertical: 20,
+        },
+        categoryTitle: {
+          fontSize: 24,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginVertical: 20,
+          width: "100%",
+          color: "#006368",
+        },
+        menuContainer: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-evenly",
+          width: "100%",
+          marginBottom: 40,
+        },
+        menuItem: {
+          backgroundColor: "#009688",
+          width: "25%",
+          aspectRatio: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 10,
+          marginBottom: 15,
+          transition: "transform 0.2s ease-in-out",
+        },
+        menuIcon: {
+          width: 60,
+          height: 60,
+          marginBottom: 10,
+        },
+        menuText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "600",
+          textAlign: "center",
+        },
+      });
 
 export default HomeScreen;

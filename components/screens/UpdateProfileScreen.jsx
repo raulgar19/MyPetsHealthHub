@@ -193,12 +193,6 @@ const UpdateProfileScreen = () => {
           onChangeText={(text) => setUserData({ ...userData, nickname: text })}
           placeholder="Nombre de usuario"
         />
-        <TextInput
-          style={styles.input}
-          value={userData.email || ""}
-          onChangeText={(text) => setUserData({ ...userData, email: text })}
-          placeholder="Correo electrónico"
-        />
 
         <View style={styles.buttonContainer}>
           <Pressable

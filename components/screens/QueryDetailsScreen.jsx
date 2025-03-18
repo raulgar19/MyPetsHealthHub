@@ -1,49 +1,136 @@
-import React from 'react';
-import { Link } from 'expo-router';
-import { View, Text, StyleSheet, Image, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from "react";
+import { Link } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ApiService from "../../api";
 
 const QueryDetailsScreen = () => {
-  const query = {
-    petName: 'Luna',
-    date: '2024-12-15',
-    time: '09:00 AM',
-    vet: 'Dr. Smith',
-    vetAddress: 'Calle Veterinaria, 10, Madrid',
-    purpose: 'Vacunación de refuerzo y chequeo general',
-    requiredActions: 'Asegúrese de que Luna esté al día con sus vacunas antes de la cita.',
-    preVisitInstructions: 'No darle de comer 8 horas antes de la consulta.',
-    followUpActions: 'Programar otra cita de control después de la vacunación.',
+  const [query, setQuery] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [formattedDate, setFormattedDate] = useState("");
+  const [formattedTime, setFormattedTime] = useState("");
+
+  useEffect(() => {
+    const fetchQueryDetails = async () => {
+      try {
+        const queryId = await AsyncStorage.getItem("queryID");
+        if (!queryId) throw new Error("No se encontró el ID de la consulta.");
+
+        const response = await ApiService.getQueryById(queryId);
+        setQuery(response.data);
+        const { formattedDate, formattedTime } = formatDateTime(
+          response.data.date,
+          response.data.hour
+        );
+        setFormattedDate(formattedDate);
+        setFormattedTime(formattedTime);
+      } catch (err) {
+        setError(
+          err.message || "Error al obtener los detalles de la consulta."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQueryDetails();
+  }, []);
+
+  const formatDateTime = (dateString, hourString) => {
+    let date = new Date(dateString);
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    const formattedDate =
+      (day < 10 ? "0" : "") +
+      day +
+      "/" +
+      (month < 10 ? "0" : "") +
+      month +
+      "/" +
+      year;
+
+    let hourSplited = hourString.split(":");
+    const formattedTime = hourSplited[0] + ":" + hourSplited[1];
+
+    return { formattedDate, formattedTime };
   };
 
-  return (
-    <SafeAreaView style={styles.safeContainer}>
+  if (loading) {
+    return <ActivityIndicator size="large" color="#006368" />;
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.safeContainer}>
         <View style={styles.navbar}>
-        <Link asChild href={"/home"}>
+          <Link asChild href={"/home"}>
             <Pressable>
-                <Image
-                  source={require('../../assets/icons/logo-mobile.png')}
-                  style={styles.logo}
-                />
-              </Pressable>
-        </Link>
-          <Text style={styles.navTitle}>Consultas programadas</Text>
+              <Image
+                source={require("../../assets/icons/logo-mobile.png")}
+                style={styles.logo}
+              />
+            </Pressable>
+          </Link>
+          <Text style={styles.navTitle}>Detalles de la cita</Text>
           <Link asChild href={"/profile"}>
             <Pressable>
               <Image
-                source={require('../../assets/icons/profile-icon.png')}
+                source={require("../../assets/icons/profile-icon.png")}
                 style={styles.profileIcon}
               />
             </Pressable>
           </Link>
         </View>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>
+            No se encontró la cita seleccionada
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safeContainer}>
+      <View style={styles.navbar}>
+        <Link asChild href={"/home"}>
+          <Pressable>
+            <Image
+              source={require("../../assets/icons/logo-mobile.png")}
+              style={styles.logo}
+            />
+          </Pressable>
+        </Link>
+        <Text style={styles.navTitle}>Detalles de la cita</Text>
+        <Link asChild href={"/profile"}>
+          <Pressable>
+            <Image
+              source={require("../../assets/icons/profile-icon.png")}
+              style={styles.profileIcon}
+            />
+          </Pressable>
+        </Link>
+      </View>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.detailsContainer}>
-          <Text style={styles.title}>Consulta de {query.petName}</Text>
-          <Text style={styles.info}>Fecha: {query.date}</Text>
-          <Text style={styles.info}>Hora: {query.time}</Text>
-          <Text style={styles.info}>Veterinario: {query.vet}</Text>
-          <Text style={styles.info}>Dirección: {query.vetAddress}</Text>
+          <Text style={styles.title}>Consulta de {query.pet.name}</Text>
+          <Text style={styles.info}>Fecha: {formattedDate}</Text>
+          <Text style={styles.info}>Hora: {formattedTime}</Text>
+          <Text style={styles.info}>Veterinario: {query.vet.name}</Text>
+          <Text style={styles.info}>Dirección: {query.vet.address}</Text>
 
           <Text style={styles.subtitle}>Propósito de la Consulta:</Text>
           <Text style={styles.info}>{query.purpose}</Text>
@@ -51,8 +138,10 @@ const QueryDetailsScreen = () => {
           <Text style={styles.subtitle}>Acciones Requeridas:</Text>
           <Text style={styles.info}>{query.requiredActions}</Text>
 
-          <Text style={styles.subtitle}>Instrucciones Previas a la Visita:</Text>
-          <Text style={styles.info}>{query.preVisitInstructions}</Text>
+          <Text style={styles.subtitle}>
+            Instrucciones Previas a la Visita:
+          </Text>
+          <Text style={styles.info}>{query.previewInstructions}</Text>
 
           <Text style={styles.subtitle}>Próximas Acciones:</Text>
           <Text style={styles.info}>{query.followUpActions}</Text>
@@ -65,18 +154,18 @@ const QueryDetailsScreen = () => {
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-    backgroundColor: '#B7E3DD',
+    backgroundColor: "#B7E3DD",
   },
   container: {
     alignItems: "center",
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     height: 60,
-    backgroundColor: '#006368',
+    backgroundColor: "#006368",
     paddingHorizontal: 20,
     marginBottom: 20,
   },
@@ -85,22 +174,22 @@ const styles = StyleSheet.create({
     height: 40,
   },
   navTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   profileIcon: {
     width: 40,
     height: 40,
   },
   detailsContainer: {
-    width: '80%',
+    width: "80%",
     maxWidth: 400,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     margin: 20,
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
@@ -108,21 +197,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    color: '#000',
+    color: "#000",
   },
   info: {
     fontSize: 18,
     marginBottom: 12,
-    color: '#555',
+    color: "#555",
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 16,
     marginBottom: 8,
-    color: '#000',
+    color: "#000",
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 50,
+    color: "#777",
   },
 });
 

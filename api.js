@@ -95,10 +95,22 @@ class ApiService {
     return this.api.get(`Vets/getById/${userId}`);
   }
 
+  getVetByAppUserId(userId) {
+    return this.api.get(`AppUsers/getVetByUserId/${userId}`);
+  }
+
+  getQueryById(queryId) {
+    return this.api.get(`ScheduledQueries/getQueryById/${queryId}`);
+  }
+
   getPetQueries(petId, vetId) {
     return this.api.get(
       `ScheduledQueries/getPetQueries?petId=${petId}&vetId=${vetId}`
     );
+  }
+
+  getUserPetsQueries(userId) {
+    return this.api.get(`ScheduledQueries/getUserPetsQueries/${userId}`);
   }
 
   getProductsByProductTypeId(productTypeId) {

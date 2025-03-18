@@ -8,6 +8,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiService from "../../api";
@@ -134,107 +135,211 @@ const PetDetailsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  scrollContainer: {
-    paddingBottom: 20,
-  },
-  petDetailsContainer: {
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    marginHorizontal: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  petImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
-  },
-  petName: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-  },
-  petBreed: {
-    fontSize: 18,
-    color: "#009688",
-    marginBottom: 5,
-  },
-  petAge: {
-    fontSize: 18,
-    color: "#333",
-    marginBottom: 5,
-  },
-  petWeight: {
-    fontSize: 18,
-    color: "#333",
-    marginBottom: 20,
-  },
-  section: {
-    marginBottom: 20,
-    width: "100%",
-    paddingHorizontal: 10,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#006368",
-    marginBottom: 10,
-  },
-  sectionContent: {
-    fontSize: 16,
-    color: "#333",
-  },
-  petCardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 5,
-  },
-  viewButton: {
-    backgroundColor: "#006368",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  viewButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+          marginBottom: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        scrollContainer: {
+          paddingBottom: 20,
+        },
+        petDetailsContainer: {
+          alignItems: "center",
+          padding: 20,
+          backgroundColor: "#FFFFFF",
+          borderRadius: 10,
+          marginHorizontal: 20,
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        petImage: {
+          width: 150,
+          height: 150,
+          borderRadius: 75,
+          marginBottom: 20,
+        },
+        petName: {
+          fontSize: 26,
+          fontWeight: "bold",
+          color: "#333",
+          marginBottom: 10,
+        },
+        petBreed: {
+          fontSize: 18,
+          color: "#009688",
+          marginBottom: 5,
+        },
+        petAge: {
+          fontSize: 18,
+          color: "#333",
+          marginBottom: 5,
+        },
+        petWeight: {
+          fontSize: 18,
+          color: "#333",
+          marginBottom: 20,
+        },
+        section: {
+          marginBottom: 20,
+          width: "100%",
+          paddingHorizontal: 10,
+        },
+        sectionTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 10,
+        },
+        sectionContent: {
+          fontSize: 16,
+          color: "#333",
+        },
+        petCardContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 5,
+        },
+        viewButton: {
+          backgroundColor: "#006368",
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          borderRadius: 5,
+          marginLeft: 10,
+        },
+        viewButtonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+          marginBottom: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        scrollContainer: {
+          paddingBottom: 20,
+        },
+        petDetailsContainer: {
+          alignItems: "center",
+          padding: 20,
+          backgroundColor: "#FFFFFF",
+          borderRadius: 10,
+          marginHorizontal: "30%",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        petImage: {
+          width: 150,
+          height: 150,
+          borderRadius: 75,
+          marginBottom: 20,
+        },
+        petName: {
+          fontSize: 26,
+          fontWeight: "bold",
+          color: "#333",
+          marginBottom: 10,
+        },
+        petBreed: {
+          fontSize: 18,
+          color: "#009688",
+          marginBottom: 5,
+        },
+        petAge: {
+          fontSize: 18,
+          color: "#333",
+          marginBottom: 5,
+        },
+        petWeight: {
+          fontSize: 18,
+          color: "#333",
+          marginBottom: 20,
+        },
+        section: {
+          marginBottom: 20,
+          width: "100%",
+          paddingHorizontal: 10,
+        },
+        sectionTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 10,
+        },
+        sectionContent: {
+          fontSize: 16,
+          color: "#333",
+        },
+        petCardContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 5,
+        },
+        viewButton: {
+          backgroundColor: "#006368",
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          borderRadius: 5,
+          marginLeft: 10,
+        },
+        viewButtonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+      });
 
 export default PetDetailsScreen;

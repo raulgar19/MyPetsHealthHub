@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, router } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -10,17 +10,21 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  Platform,
+  Modal,
+  Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiService from "../../api";
-import * as Linking from "expo-linking";
 
 const ChangeVetScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [veterinarios, setVeterinarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedVet, setSelectedVet] = useState(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const fetchVets = async () => {
@@ -38,15 +42,36 @@ const ChangeVetScreen = () => {
   }, []);
 
   const handlePress = (item) => {
-    if (item.link) {
-      if (Platform.OS === "web") {
-        window.open(item.link, "_blank");
-      } else {
-        Linking.openURL(item.link).catch(() => {
-          Alert.alert("Error", "No se pudo abrir el enlace de Google Maps.");
-        });
-      }
+    setSelectedVet(item);
+    setModalVisible(true);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleClose = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
+  };
+
+  const handleConfirm = async () => {
+    const userId = await AsyncStorage.getItem("userID");
+
+    if (!userId) {
+      Alert.alert("Error", "No se pudo obtener el ID del usuario.");
+      return;
     }
+
+    await apiService.changeVet(userId, selectedVet.id);
+
+    handleClose();
+
+    router.push("/home");
   };
 
   const renderItem = ({ item }) => (
@@ -102,6 +127,31 @@ const ChangeVetScreen = () => {
             <Text style={styles.noResults}>No se encontraron veterinarios</Text>
           }
         />
+      )}
+
+      {modalVisible && (
+        <Modal
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={handleClose}
+        >
+          <View style={styles.modalContainer}>
+            <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
+              <Text style={styles.modalTitle}>Aviso</Text>
+              <Text style={styles.modalMessage}>
+                ¿Está seguro que desea cambiar de veterinario?
+              </Text>
+              <View style={styles.modalButtons}>
+                <Pressable style={styles.cancelButton} onPress={handleClose}>
+                  <Text style={styles.buttonText}>Cancelar</Text>
+                </Pressable>
+                <Pressable style={styles.acceptButton} onPress={handleConfirm}>
+                  <Text style={styles.buttonText}>Aceptar</Text>
+                </Pressable>
+              </View>
+            </Animated.View>
+          </View>
+        </Modal>
       )}
     </SafeAreaView>
   );
@@ -187,6 +237,53 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: "#555",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#ccc",
+    borderRadius: 5,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  acceptButton: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#006368",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

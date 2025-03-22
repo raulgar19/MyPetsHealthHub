@@ -125,6 +125,10 @@ class ApiService {
     return this.api.put(`AppUsers/updateUser/${id}`, request);
   }
 
+  changeVet(userId, vetId) {
+    return this.api.put("AppUsers/changeVet", { userId, vetId });
+  }
+
   changeBankAccount(userId, request) {
     return this.api.put(`AppUsers/changeBankAccount/${userId}`, request);
   }

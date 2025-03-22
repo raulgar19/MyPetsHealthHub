@@ -12,6 +12,7 @@ import {
   Alert,
   Modal,
   Animated,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -157,134 +158,267 @@ const ChangeVetScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  searchInput: {
-    height: 40,
-    margin: 16,
-    borderWidth: 1,
-    borderColor: "#009688",
-    borderRadius: 8,
-    paddingLeft: 10,
-    fontSize: 16,
-    backgroundColor: "white",
-  },
-  list: {
-    flex: 1,
-  },
-  listContent: {
-    paddingBottom: 20,
-  },
-  listItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    borderRadius: 8,
-    marginHorizontal: 10,
-    marginVertical: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
-    elevation: 3,
-    alignItems: "center",
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  itemAddress: {
-    fontSize: 14,
-    color: "#555",
-  },
-  loader: {
-    marginTop: 20,
-  },
-  errorText: {
-    textAlign: "center",
-    color: "red",
-    marginTop: 20,
-    fontSize: 16,
-  },
-  noResults: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#555",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#ccc",
-    borderRadius: 5,
-    alignItems: "center",
-    marginRight: 10,
-  },
-  acceptButton: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#006368",
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        searchInput: {
+          height: 40,
+          margin: 16,
+          borderWidth: 1,
+          borderColor: "#009688",
+          borderRadius: 8,
+          paddingLeft: 10,
+          fontSize: 16,
+          backgroundColor: "white",
+        },
+        list: {
+          flex: 1,
+        },
+        listContent: {
+          paddingBottom: 20,
+        },
+        listItem: {
+          backgroundColor: "#fff",
+          padding: 15,
+          borderBottomWidth: 1,
+          borderBottomColor: "#ccc",
+          borderRadius: 8,
+          marginHorizontal: 10,
+          marginVertical: 5,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+          shadowRadius: 1.5,
+          elevation: 3,
+          alignItems: "center",
+        },
+        itemTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        itemAddress: {
+          fontSize: 14,
+          color: "#555",
+        },
+        loader: {
+          marginTop: 20,
+        },
+        errorText: {
+          textAlign: "center",
+          color: "red",
+          marginTop: 20,
+          fontSize: 16,
+        },
+        noResults: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          width: 300,
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalMessage: {
+          fontSize: 16,
+          textAlign: "center",
+          marginBottom: 20,
+        },
+        modalButtons: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        cancelButton: {
+          flex: 1,
+          padding: 10,
+          backgroundColor: "#ccc",
+          borderRadius: 5,
+          alignItems: "center",
+          marginRight: 10,
+        },
+        acceptButton: {
+          flex: 1,
+          padding: 10,
+          backgroundColor: "#006368",
+          borderRadius: 5,
+          alignItems: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        searchInput: {
+          height: 40,
+          marginVertical: 16,
+          marginHorizontal: "20%",
+          borderWidth: 1,
+          borderColor: "#009688",
+          borderRadius: 8,
+          paddingLeft: 10,
+          fontSize: 16,
+          backgroundColor: "white",
+        },
+        list: {
+          flex: 1,
+          marginHorizontal: "20%",
+        },
+        listContent: {
+          paddingBottom: 20,
+        },
+        listItem: {
+          backgroundColor: "#fff",
+          padding: 15,
+          borderBottomWidth: 1,
+          borderBottomColor: "#ccc",
+          borderRadius: 8,
+          marginHorizontal: 10,
+          marginVertical: 5,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+          shadowRadius: 1.5,
+          elevation: 3,
+          alignItems: "center",
+        },
+        itemTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        itemAddress: {
+          fontSize: 14,
+          color: "#555",
+        },
+        loader: {
+          marginTop: 20,
+        },
+        errorText: {
+          textAlign: "center",
+          color: "red",
+          marginTop: 20,
+          fontSize: 16,
+        },
+        noResults: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          width: 300,
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalMessage: {
+          fontSize: 16,
+          textAlign: "center",
+          marginBottom: 20,
+        },
+        modalButtons: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        cancelButton: {
+          flex: 1,
+          padding: 10,
+          backgroundColor: "#ccc",
+          borderRadius: 5,
+          alignItems: "center",
+          marginRight: 10,
+        },
+        acceptButton: {
+          flex: 1,
+          padding: 10,
+          backgroundColor: "#006368",
+          borderRadius: 5,
+          alignItems: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      });
 
 export default ChangeVetScreen;

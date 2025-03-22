@@ -31,15 +31,31 @@ const UpdateProfileScreen = () => {
   const [scaleValue] = useState(new Animated.Value(0));
   const [opacityValue] = useState(new Animated.Value(0));
 
-  const userId = null;
+  const [userId, setUserId] = useState(null);
+
   const router = useRouter();
 
   useEffect(() => {
     getUserId();
-  });
+  }, []); // Only run getUserId on mount
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]); // Fetch user data when userId is set
+
+  const fetchUserData = async () => {
+    const response = await apiService.getUserById(userId);
+    setUserData(response.data);
+    setLoading(false);
+  };
 
   const getUserId = async () => {
-    userId = await AsyncStorage.getItem("userID");
+    const id = await AsyncStorage.getItem("userID");
+    if (id) {
+      setUserId(id); // Set userId after getting it from AsyncStorage
+    }
   };
 
   const handleSaveChanges = async () => {
@@ -131,16 +147,6 @@ const UpdateProfileScreen = () => {
       closeCallback();
     });
   };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const response = await apiService.getUserById(userId);
-      setUserData(response.data);
-      setLoading(false);
-    };
-
-    fetchUserData();
-  }, [userId]);
 
   useEffect(() => {
     if (confirmModalVisible || passwordModalVisible) {

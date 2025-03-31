@@ -10,9 +10,10 @@ import {
   Modal,
   Animated,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RemoveQueryScreen = () => {
@@ -196,153 +197,303 @@ const RemoveQueryScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    position: "relative",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  link: {
-    position: "absolute",
-    left: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#006368",
-    marginBottom: 10,
-    marginTop: 20,
-    textAlign: "center",
-  },
-  petInfo: {
-    backgroundColor: "#eaf8f6",
-    padding: 15,
-    borderRadius: 10,
-    marginHorizontal: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  value: {
-    fontWeight: "normal",
-  },
-  queryItem: {
-    flexDirection: "row",
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-    elevation: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  queryTextContainer: {
-    flex: 1,
-    marginRight: 10,
-  },
-  queryText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  deleteButton: {
-    backgroundColor: "#FF0000",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  loadingText: {
-    textAlign: "center",
-    fontSize: 16,
-    color: "#333",
-  },
-  errorText: {
-    textAlign: "center",
-    fontSize: 16,
-    color: "red",
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cancelButton: {
-    backgroundColor: "#B0B0B0",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginHorizontal: 10,
-  },
-  deleteButtonModal: {
-    backgroundColor: "#009688",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginHorizontal: 10,
-  },
-  modalButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          position: "relative",
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        link: {
+          position: "absolute",
+          left: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTextContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        listContent: {
+          paddingHorizontal: 20,
+          paddingBottom: 20,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 10,
+          marginTop: 20,
+          textAlign: "center",
+        },
+        petInfo: {
+          backgroundColor: "#eaf8f6",
+          padding: 15,
+          borderRadius: 10,
+          marginHorizontal: 20,
+        },
+        label: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        value: {
+          fontWeight: "normal",
+        },
+        queryItem: {
+          flexDirection: "row",
+          backgroundColor: "#f9f9f9",
+          padding: 15,
+          marginBottom: 10,
+          borderRadius: 8,
+          elevation: 1,
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+        queryTextContainer: {
+          flex: 1,
+          marginRight: 10,
+        },
+        queryText: {
+          fontSize: 16,
+          marginBottom: 8,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        deleteButton: {
+          backgroundColor: "#FF0000",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+        },
+        deleteButtonText: {
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 16,
+        },
+        loadingText: {
+          textAlign: "center",
+          fontSize: 16,
+          color: "#333",
+        },
+        errorText: {
+          textAlign: "center",
+          fontSize: 16,
+          color: "red",
+        },
+        modalOverlay: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          width: 300,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 18,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtons: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        cancelButton: {
+          backgroundColor: "#B0B0B0",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          marginHorizontal: 10,
+        },
+        deleteButtonModal: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          marginHorizontal: 10,
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 16,
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          position: "relative",
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        link: {
+          position: "absolute",
+          left: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTextContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        listContent: {
+          marginHorizontal: "20%",
+          paddingBottom: 20,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 10,
+          marginTop: 20,
+          textAlign: "center",
+        },
+        petInfo: {
+          backgroundColor: "#eaf8f6",
+          padding: 15,
+          borderRadius: 10,
+          marginHorizontal: "20%",
+        },
+        label: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        value: {
+          fontWeight: "normal",
+        },
+        queryItem: {
+          flexDirection: "row",
+          backgroundColor: "#f9f9f9",
+          padding: 15,
+          marginBottom: 10,
+          borderRadius: 8,
+          elevation: 1,
+          alignItems: "center",
+          justifyContent: "space-between",
+        },
+        queryTextContainer: {
+          flex: 1,
+          marginRight: 10,
+        },
+        queryText: {
+          fontSize: 16,
+          marginBottom: 8,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        deleteButton: {
+          backgroundColor: "#FF0000",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+        },
+        deleteButtonText: {
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 16,
+        },
+        loadingText: {
+          textAlign: "center",
+          fontSize: 16,
+          color: "#333",
+        },
+        errorText: {
+          textAlign: "center",
+          fontSize: 16,
+          color: "red",
+        },
+        modalOverlay: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          width: 300,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 18,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtons: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        cancelButton: {
+          backgroundColor: "#B0B0B0",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          marginHorizontal: 10,
+        },
+        deleteButtonModal: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+          marginHorizontal: 10,
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 16,
+        },
+      });
 
 export default RemoveQueryScreen;

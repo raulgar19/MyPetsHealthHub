@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   StyleSheet,
   Text,
@@ -14,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiService from "../../api";
+import apiService from "../../services/api";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");

@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetsManagementScreen = () => {

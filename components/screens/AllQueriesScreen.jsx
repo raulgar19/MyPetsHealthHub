@@ -7,9 +7,10 @@ import {
   Pressable,
   Image,
   FlatList,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AllQueriesScreen = () => {
@@ -39,6 +40,20 @@ const AllQueriesScreen = () => {
     fetchAppointments();
   }, []);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatHour = (hourString) => {
+    let hourSplited = hourString.split(":");
+    const formattedTime = hourSplited[0] + ":" + hourSplited[1];
+    return formattedTime;
+  };
+
   const renderItem = ({ item }) => (
     <View style={styles.appointment}>
       <Text style={styles.petName}>{item.pet.name}</Text>
@@ -49,10 +64,10 @@ const AllQueriesScreen = () => {
         </Text>
       </Text>
       <Text style={styles.details}>
-        Fecha: <Text style={styles.bold}>{item.date}</Text>
+        Fecha: <Text style={styles.bold}>{formatDate(item.date)}</Text>
       </Text>
       <Text style={styles.details}>
-        Hora: <Text style={styles.bold}>{item.hour}</Text>
+        Hora: <Text style={styles.bold}>{formatHour(item.hour)}</Text>
       </Text>
       <Text style={styles.details}>Detalles: {item.purpose}</Text>
     </View>
@@ -77,7 +92,7 @@ const AllQueriesScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Link asChild href="/vetHome" style={styles.link}>
+        <Link asChild href={"/vetHome"}>
           <Pressable>
             <Image
               source={require("../../assets/icons/logo-mobile.png")}
@@ -85,10 +100,9 @@ const AllQueriesScreen = () => {
             />
           </Pressable>
         </Link>
-        <View style={styles.navTextContainer}>
-          <Text style={styles.navTitle}>Citas Pendientes</Text>
-        </View>
+        <Text style={styles.navTitle}>Citas Pendientes</Text>
       </View>
+
       <FlatList
         data={appointments}
         keyExtractor={(item) => item.id.toString()}
@@ -102,86 +116,163 @@ const AllQueriesScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    position: "relative",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  link: {
-    position: "absolute",
-    left: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  container: {
-    padding: 16,
-  },
-  appointment: {
-    backgroundColor: "#ffffff",
-    padding: 16,
-    marginVertical: 8,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    borderLeftWidth: 4,
-    borderLeftColor: "#009688",
-  },
-  petName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#006368",
-  },
-  details: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 4,
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  noAppointments: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#555",
-  },
-  loadingText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#555",
-  },
-  errorText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#D9534F",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          padding: 16,
+        },
+        appointment: {
+          backgroundColor: "#ffffff",
+          padding: 16,
+          marginVertical: 8,
+          borderRadius: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 2,
+          borderLeftWidth: 4,
+          borderLeftColor: "#009688",
+        },
+        petName: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 8,
+          color: "#006368",
+        },
+        details: {
+          fontSize: 14,
+          color: "#555",
+          marginBottom: 4,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        noAppointments: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        loadingText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        errorText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#D9534F",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          marginHorizontal: "30%",
+        },
+        appointment: {
+          backgroundColor: "#ffffff",
+          padding: 16,
+          marginVertical: 8,
+          borderRadius: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 2,
+          borderLeftWidth: 4,
+          borderLeftColor: "#009688",
+        },
+        petName: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 8,
+          color: "#006368",
+        },
+        details: {
+          fontSize: 14,
+          color: "#555",
+          marginBottom: 4,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        noAppointments: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        loadingText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        errorText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#D9534F",
+        },
+      });
 
 export default AllQueriesScreen;

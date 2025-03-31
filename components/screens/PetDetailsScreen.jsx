@@ -11,7 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PetDetailsScreen = () => {
@@ -51,6 +51,14 @@ const PetDetailsScreen = () => {
 
     fetchPetDetails();
   }, [petId]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -94,7 +102,7 @@ const PetDetailsScreen = () => {
             <Text style={styles.petName}>{pet.name}</Text>
             <Text style={styles.petBreed}>Raza: {pet.breed}</Text>
             <Text style={styles.petAge}>
-              Fecha de nacimiento: {new Date(pet.birthday).toLocaleDateString()}
+              Fecha de nacimiento: {formatDate(pet.birthday)}
             </Text>
             <Text style={styles.petWeight}>Peso: {pet.weight} kg</Text>
 

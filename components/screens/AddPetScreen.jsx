@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiService from "../../api";
+import apiService from "../../services/api";
 
 const convertDateFormat = (dateStr) => {
   const parts = dateStr.split("/");
@@ -35,7 +35,7 @@ const AddPetScreen = () => {
     weight: "",
     notes: "",
     lastVaccineDate: "",
-    userId: null, // Inicializado como null
+    userId: null,
   });
 
   useEffect(() => {
@@ -258,83 +258,163 @@ const AddPetScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  scrollContainer: {
-    padding: 20,
-  },
-  petContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#000",
-    marginVertical: 20,
-    textAlign: "center",
-  },
-  input: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "white",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: "#006368",
-    borderWidth: 1,
-  },
-  textArea: {
-    height: 100,
-    paddingVertical: 10,
-    textAlignVertical: "top",
-  },
-  button: {
-    backgroundColor: "#009688",
-    borderRadius: 5,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    marginTop: 20,
-    alignSelf: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        scrollContainer: {
+          padding: 20,
+        },
+        petContainer: {
+          width: "100%",
+          alignItems: "center",
+          marginBottom: 15,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        subtitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#000",
+          marginVertical: 20,
+          textAlign: "center",
+        },
+        input: {
+          width: "80%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+        },
+        textArea: {
+          height: 100,
+          paddingVertical: 10,
+          textAlignVertical: "top",
+        },
+        button: {
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 15,
+          paddingHorizontal: 30,
+          marginTop: 20,
+          alignSelf: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        scrollContainer: {
+          padding: 20,
+        },
+        petContainer: {
+          width: "100%",
+          alignItems: "center",
+          marginBottom: 15,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        subtitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#000",
+          marginVertical: 20,
+          textAlign: "center",
+        },
+        input: {
+          width: "40%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+        },
+        textArea: {
+          height: 100,
+          paddingVertical: 10,
+          textAlignVertical: "top",
+        },
+        button: {
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 15,
+          paddingHorizontal: 30,
+          marginTop: 20,
+          alignSelf: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+      });
 
 export default AddPetScreen;

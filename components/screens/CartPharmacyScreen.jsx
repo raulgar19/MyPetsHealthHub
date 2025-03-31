@@ -8,10 +8,11 @@ import {
   StyleSheet,
   Pressable,
   Modal,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 
 const CartPharmacyScreen = () => {
   const [pharmacyCartItems, setPharmacyCartItems] = useState([]);
@@ -277,184 +278,366 @@ const CartPharmacyScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  tabsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 10,
-    backgroundColor: "#E0F7FA",
-    borderRadius: 5,
-    padding: 5,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
-  },
-  activeTab: {
-    backgroundColor: "#009688",
-  },
-  tabText: {
-    fontSize: 16,
-    color: "#009688",
-  },
-  activeTabText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-  },
-  cartContainer: {
-    paddingHorizontal: 10,
-  },
-  cartItemContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  cartItemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 10,
-  },
-  cartItemDetails: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  cartItemName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  cartItemPrice: {
-    fontSize: 14,
-    color: "#009688",
-  },
-  quantityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 5,
-  },
-  quantityButton: {
-    backgroundColor: "#006368",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  quantityButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  quantityText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  removeButton: {
-    backgroundColor: "#FF6347",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  removeButtonText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-  },
-  totalContainer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderColor: "#EEE",
-    alignItems: "center",
-  },
-  totalText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  checkoutButton: {
-    backgroundColor: "#009688",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 15,
-  },
-  checkoutButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  emptyCartText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 50,
-    color: "#777",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  closeButton: {
-    backgroundColor: "#009688",
-    padding: 10,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        tabsContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          marginBottom: 10,
+          backgroundColor: "#E0F7FA",
+          borderRadius: 5,
+          padding: 5,
+        },
+        tab: {
+          flex: 1,
+          paddingVertical: 10,
+          alignItems: "center",
+          borderRadius: 5,
+        },
+        activeTab: {
+          backgroundColor: "#009688",
+        },
+        tabText: {
+          fontSize: 16,
+          color: "#009688",
+        },
+        activeTabText: {
+          color: "#FFFFFF",
+          fontWeight: "bold",
+        },
+        cartContainer: {
+          paddingHorizontal: 10,
+        },
+        cartItemContainer: {
+          flexDirection: "row",
+          backgroundColor: "#FFFFFF",
+          padding: 10,
+          marginVertical: 5,
+          borderRadius: 10,
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        cartItemImage: {
+          width: 60,
+          height: 60,
+          borderRadius: 8,
+          marginRight: 10,
+        },
+        cartItemDetails: {
+          flex: 1,
+          justifyContent: "center",
+        },
+        cartItemName: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        cartItemPrice: {
+          fontSize: 14,
+          color: "#009688",
+        },
+        quantityContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 5,
+        },
+        quantityButton: {
+          backgroundColor: "#006368",
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          borderRadius: 5,
+          marginHorizontal: 5,
+        },
+        quantityButtonText: {
+          color: "#FFFFFF",
+          fontSize: 14,
+          fontWeight: "bold",
+        },
+        quantityText: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        removeButton: {
+          backgroundColor: "#FF6347",
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          borderRadius: 5,
+          marginLeft: 10,
+        },
+        removeButtonText: {
+          color: "#FFFFFF",
+          fontSize: 12,
+        },
+        totalContainer: {
+          padding: 20,
+          borderTopWidth: 1,
+          borderColor: "#EEE",
+          alignItems: "center",
+        },
+        totalText: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        checkoutButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 5,
+          marginTop: 15,
+        },
+        checkoutButtonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        emptyCartText: {
+          fontSize: 16,
+          textAlign: "center",
+          marginTop: 50,
+          color: "#777",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+        },
+        closeButton: {
+          backgroundColor: "#009688",
+          padding: 10,
+          borderRadius: 5,
+        },
+        closeButtonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        tabsContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          marginBottom: 10,
+          backgroundColor: "#E0F7FA",
+          borderRadius: 5,
+          padding: 5,
+        },
+        tab: {
+          flex: 1,
+          paddingVertical: 10,
+          alignItems: "center",
+          borderRadius: 5,
+        },
+        activeTab: {
+          backgroundColor: "#009688",
+        },
+        tabText: {
+          fontSize: 16,
+          color: "#009688",
+        },
+        activeTabText: {
+          color: "#FFFFFF",
+          fontWeight: "bold",
+        },
+        cartContainer: {
+          marginHorizontal: "20%",
+          paddingHorizontal: 10,
+        },
+        cartItemContainer: {
+          flexDirection: "row",
+          backgroundColor: "#FFFFFF",
+          padding: 10,
+          marginVertical: 5,
+          borderRadius: 10,
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        cartItemImage: {
+          width: 60,
+          height: 60,
+          borderRadius: 8,
+          marginRight: 10,
+        },
+        cartItemDetails: {
+          flex: 1,
+          justifyContent: "center",
+        },
+        cartItemName: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        cartItemPrice: {
+          fontSize: 14,
+          color: "#009688",
+        },
+        quantityContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 5,
+        },
+        quantityButton: {
+          backgroundColor: "#006368",
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          borderRadius: 5,
+          marginHorizontal: 5,
+        },
+        quantityButtonText: {
+          color: "#FFFFFF",
+          fontSize: 14,
+          fontWeight: "bold",
+        },
+        quantityText: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        removeButton: {
+          backgroundColor: "#FF6347",
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          borderRadius: 5,
+          marginLeft: 10,
+        },
+        removeButtonText: {
+          color: "#FFFFFF",
+          fontSize: 12,
+        },
+        totalContainer: {
+          padding: 20,
+          borderTopWidth: 1,
+          borderColor: "#EEE",
+          alignItems: "center",
+        },
+        totalText: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        checkoutButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 5,
+          marginTop: 15,
+        },
+        checkoutButtonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        emptyCartText: {
+          fontSize: 16,
+          textAlign: "center",
+          marginTop: 50,
+          color: "#777",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+        },
+        closeButton: {
+          backgroundColor: "#009688",
+          padding: 10,
+          borderRadius: 5,
+        },
+        closeButtonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      });
 
 export default CartPharmacyScreen;

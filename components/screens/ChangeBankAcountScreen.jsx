@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiService from "../../api";
+import apiService from "../../services/api";
 
 const ChangeBankAcountScreen = () => {
   const [bankAccount, setBankAccount] = useState("");
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    width: "70%",
+    width: "30%",
     height: 50,
     backgroundColor: "white",
     borderRadius: 5,

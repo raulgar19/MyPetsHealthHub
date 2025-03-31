@@ -10,7 +10,7 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UserProfileScreen = () => {

@@ -9,11 +9,12 @@ import {
   Image,
   Modal,
   Animated,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiService from "../../api";
+import apiService from "../../services/api";
 
 const ChangePasswordScreen = () => {
   const [password, setPassword] = useState("");
@@ -24,7 +25,6 @@ const ChangePasswordScreen = () => {
 
   const [userId, setUserId] = useState(null);
 
-  // Obtener el userID de AsyncStorage
   useEffect(() => {
     const getUserId = async () => {
       const storedUserId = await AsyncStorage.getItem("userID");
@@ -152,107 +152,211 @@ const ChangePasswordScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logoContainer: {
-    position: "absolute",
-    left: 10,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  passContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  input: {
-    width: "70%",
-    height: 50,
-    backgroundColor: "white",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: "#006368",
-    borderWidth: 1,
-  },
-  button: {
-    backgroundColor: "#009688",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginTop: 20,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContainer: {
-    width: 300,
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-  },
-  modalButton: {
-    backgroundColor: "#009688",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  eyeIconContainer: {
-    position: "absolute",
-    right: 10,
-    top: "50%",
-    transform: [{ translateY: -12 }],
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+        },
+        passContainer: {
+          width: "100%",
+          alignItems: "center",
+        },
+        input: {
+          width: "70%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+        },
+        button: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          marginTop: 20,
+          borderRadius: 8,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        modalOverlay: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContainer: {
+          width: 300,
+          padding: 20,
+          backgroundColor: "#fff",
+          borderRadius: 8,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalMessage: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: "100%",
+        },
+        modalButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+        },
+        eyeIconContainer: {
+          position: "absolute",
+          right: 10,
+          top: "50%",
+          transform: [{ translateY: -12 }],
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+        },
+        passContainer: {
+          width: "100%",
+          alignItems: "center",
+        },
+        input: {
+          width: "30%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+        },
+        button: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          marginTop: 20,
+          borderRadius: 8,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        modalOverlay: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContainer: {
+          width: 300,
+          padding: 20,
+          backgroundColor: "#fff",
+          borderRadius: 8,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        },
+        modalMessage: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: "100%",
+        },
+        modalButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+        },
+        eyeIconContainer: {
+          position: "absolute",
+          right: "33%",
+          top: "50%",
+          transform: [{ translateY: -12 }],
+        },
+      });
 
 export default ChangePasswordScreen;

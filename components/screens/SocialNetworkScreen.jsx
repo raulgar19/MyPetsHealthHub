@@ -8,9 +8,10 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SocialNetworkMobile = () => {
@@ -38,6 +39,14 @@ const SocialNetworkMobile = () => {
     fetchPosts();
   }, []);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const renderPostItem = ({ item }) => (
     <View style={styles.postItem}>
       <Text style={styles.userName}>{`@${item.appUser.nickname}`}</Text>
@@ -45,7 +54,7 @@ const SocialNetworkMobile = () => {
       {item.image && (
         <Image source={{ uri: item.image }} style={styles.postImage} />
       )}
-      <Text style={styles.postDate}>{item.postDate}</Text>
+      <Text style={styles.postDate}>{formatDate(item.postDate)}</Text>
     </View>
   );
 
@@ -118,98 +127,196 @@ const SocialNetworkMobile = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileButton: {
-    padding: 5,
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  listContainer: {
-    padding: 20,
-  },
-  postItem: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 10,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#004D40",
-  },
-  postContent: {
-    fontSize: 15,
-    marginVertical: 5,
-    color: "#333",
-  },
-  postImage: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  postDate: {
-    fontSize: 12,
-    color: "#808080",
-    textAlign: "right",
-    marginTop: 5,
-  },
-  iconContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10,
-    backgroundColor: "#006368",
-    elevation: 5,
-  },
-  iconImage: {
-    width: 40,
-    height: 40,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyText: {
-    fontSize: 18,
-    color: "#808080",
-    textAlign: "center",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileButton: {
+          padding: 5,
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        listContainer: {
+          padding: 20,
+        },
+        postItem: {
+          backgroundColor: "#ffffff",
+          borderRadius: 10,
+          padding: 15,
+          marginVertical: 10,
+          elevation: 4,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        userName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#004D40",
+        },
+        postContent: {
+          fontSize: 15,
+          marginVertical: 5,
+          color: "#333",
+        },
+        postImage: {
+          width: "100%",
+          aspectRatio: 5,
+          borderRadius: 10,
+          marginTop: 10,
+          resizeMode: "contain",
+        },
+        postDate: {
+          fontSize: 12,
+          color: "#808080",
+          textAlign: "right",
+          marginTop: 5,
+        },
+        iconContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          padding: 10,
+          backgroundColor: "#006368",
+          elevation: 5,
+        },
+        iconImage: {
+          width: 40,
+          height: 40,
+        },
+        loader: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyText: {
+          fontSize: 18,
+          color: "#808080",
+          textAlign: "center",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileButton: {
+          padding: 5,
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        listContainer: {
+          padding: 20,
+        },
+        postItem: {
+          backgroundColor: "#ffffff",
+          borderRadius: 10,
+          padding: 15,
+          marginVertical: 10,
+          marginHorizontal: "35%",
+          elevation: 4,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        userName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#004D40",
+        },
+        postContent: {
+          fontSize: 15,
+          marginVertical: 5,
+          color: "#333",
+        },
+        postImage: {
+          width: "100%",
+          aspectRatio: 1.5,
+          borderRadius: 10,
+          marginTop: 10,
+          resizeMode: "contain",
+        },
+        postDate: {
+          fontSize: 12,
+          color: "#808080",
+          textAlign: "right",
+          marginTop: 5,
+        },
+        iconContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          padding: 10,
+          backgroundColor: "#006368",
+          elevation: 5,
+        },
+        iconImage: {
+          width: 40,
+          height: 40,
+        },
+        loader: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyText: {
+          fontSize: 18,
+          color: "#808080",
+          textAlign: "center",
+        },
+      });
 
 export default SocialNetworkMobile;

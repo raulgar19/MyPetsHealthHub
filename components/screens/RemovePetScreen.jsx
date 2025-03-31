@@ -9,9 +9,10 @@ import {
   Image,
   Modal,
   Animated,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -204,132 +205,262 @@ const RemovePetMobile = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  content: {
-    flex: 1,
-    paddingBottom: 20,
-  },
-  listContainer: {
-    padding: 20,
-  },
-  petItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
-    elevation: 3,
-  },
-  selectedItem: {
-    backgroundColor: "#D3D3D3",
-  },
-  petImage: {
-    width: 60,
-    height: 60,
-    marginRight: 10,
-  },
-  petInfo: {
-    flex: 1,
-  },
-  petName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#006368",
-  },
-  button: {
-    backgroundColor: "#F44336",
-    borderRadius: 5,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  noPetsText: {
-    fontSize: 18,
-    color: "#006368",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#000",
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  modalButton: {
-    backgroundColor: "#006368",
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  cancelButton: {
-    backgroundColor: "#B0B0B0",
-  },
-  confirmButton: {
-    backgroundColor: "#006368",
-  },
-  modalButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
+const styles =
+  Platform.OS != "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        content: {
+          flex: 1,
+          paddingBottom: 20,
+        },
+        listContainer: {
+          padding: 20,
+        },
+        petItem: {
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          borderRadius: 5,
+          padding: 10,
+          marginVertical: 5,
+          elevation: 3,
+        },
+        selectedItem: {
+          backgroundColor: "#D3D3D3",
+        },
+        petImage: {
+          width: 60,
+          height: 60,
+          marginRight: 10,
+        },
+        petInfo: {
+          flex: 1,
+        },
+        petName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#006368",
+        },
+        button: {
+          backgroundColor: "#F44336",
+          borderRadius: 5,
+          paddingVertical: 15,
+          paddingHorizontal: 30,
+          alignSelf: "center",
+          marginBottom: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        noPetsText: {
+          fontSize: 18,
+          color: "#006368",
+          textAlign: "center",
+          marginTop: 20,
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+          color: "#000",
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        modalButton: {
+          backgroundColor: "#006368",
+          borderRadius: 5,
+          paddingVertical: 10,
+          paddingHorizontal: 30,
+          flex: 1,
+          marginHorizontal: 5,
+        },
+        cancelButton: {
+          backgroundColor: "#B0B0B0",
+        },
+        confirmButton: {
+          backgroundColor: "#006368",
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        content: {
+          flex: 1,
+          paddingBottom: 20,
+        },
+        listContainer: {
+          padding: 20,
+        },
+        petItem: {
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          marginHorizontal: "25%",
+          borderRadius: 5,
+          padding: 10,
+          marginVertical: 5,
+          elevation: 3,
+        },
+        selectedItem: {
+          backgroundColor: "#D3D3D3",
+        },
+        petImage: {
+          width: 60,
+          height: 60,
+          marginRight: 10,
+        },
+        petInfo: {
+          flex: 1,
+        },
+        petName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#006368",
+        },
+        button: {
+          backgroundColor: "#F44336",
+          borderRadius: 5,
+          paddingVertical: 15,
+          paddingHorizontal: 30,
+          alignSelf: "center",
+          marginBottom: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        noPetsText: {
+          fontSize: 18,
+          color: "#006368",
+          textAlign: "center",
+          marginTop: 20,
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          marginBottom: 10,
+          color: "#000",
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButtonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+        },
+        modalButton: {
+          backgroundColor: "#006368",
+          borderRadius: 5,
+          paddingVertical: 10,
+          paddingHorizontal: 30,
+          flex: 1,
+          marginHorizontal: 5,
+        },
+        cancelButton: {
+          backgroundColor: "#B0B0B0",
+        },
+        confirmButton: {
+          backgroundColor: "#006368",
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        },
+      });
 
 export default RemovePetMobile;

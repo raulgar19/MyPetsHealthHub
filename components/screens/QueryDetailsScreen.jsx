@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ApiService from "../../api";
+import ApiService from "../../services/api";
 
 const QueryDetailsScreen = () => {
   const [query, setQuery] = useState(null);

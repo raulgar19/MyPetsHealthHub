@@ -10,11 +10,12 @@ import {
   Image,
   Pressable,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
 import { Picker } from "@react-native-picker/picker";
-import apiService from "../../api";
+import apiService from "../../services/api";
 
 const RegisterScreen = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -217,93 +218,183 @@ const RegisterScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  navLogo: {
-    width: 40,
-    height: 40,
-    position: "absolute",
-    left: 20,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  innerContainer: {
-    alignItems: "center",
-    width: "100%",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-  },
-  subtitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginTop: 20,
-    textAlign: "center",
-  },
-  input: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "white",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderColor: "#006368",
-    borderWidth: 1,
-    textAlign: "left",
-  },
-  pickerContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  picker: {
-    color: "#A9A9A9",
-    width: "100%",
-  },
-  button: {
-    backgroundColor: "#009688",
-    borderRadius: 5,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  termsCheck: {
-    marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-  },
-  termsLink: {
-    color: "#006368",
-    textDecorationLine: "underline",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        navLogo: {
+          width: 40,
+          height: 40,
+          position: "absolute",
+          left: 20,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        scrollContainer: {
+          flexGrow: 1,
+          alignItems: "center",
+          paddingVertical: 20,
+        },
+        innerContainer: {
+          alignItems: "center",
+          width: "100%",
+        },
+        title: {
+          fontSize: 30,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginVertical: 20,
+        },
+        subtitle: {
+          fontSize: 22,
+          fontWeight: "bold",
+          marginTop: 20,
+          textAlign: "center",
+        },
+        input: {
+          width: "80%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+          textAlign: "left",
+        },
+        pickerContainer: {
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        picker: {
+          color: "#A9A9A9",
+          width: "100%",
+        },
+        button: {
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 15,
+          paddingHorizontal: 30,
+          marginTop: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        termsCheck: {
+          marginTop: 20,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 20,
+        },
+        termsLink: {
+          color: "#006368",
+          textDecorationLine: "underline",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        navLogo: {
+          width: 40,
+          height: 40,
+          position: "absolute",
+          left: 20,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        scrollContainer: {
+          flexGrow: 1,
+          alignItems: "center",
+          paddingVertical: 20,
+        },
+        innerContainer: {
+          alignItems: "center",
+          width: "100%",
+        },
+        title: {
+          fontSize: 30,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginVertical: 20,
+        },
+        subtitle: {
+          fontSize: 22,
+          fontWeight: "bold",
+          marginTop: 20,
+          textAlign: "center",
+        },
+        input: {
+          width: "40%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+          textAlign: "left",
+        },
+        pickerContainer: {
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        picker: {
+          color: "#A9A9A9",
+          width: "100%",
+        },
+        button: {
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          marginTop: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        termsCheck: {
+          marginTop: 20,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 20,
+        },
+        termsLink: {
+          color: "#006368",
+          textDecorationLine: "underline",
+        },
+      });
 
 export default RegisterScreen;

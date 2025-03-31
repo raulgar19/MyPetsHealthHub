@@ -10,9 +10,10 @@ import {
   Image,
   Modal,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const formatDate = (dateString) => {
@@ -98,7 +99,7 @@ const AddQueryScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Link asChild href="/vetHome" style={styles.link}>
+        <Link asChild href={"/vetHome"}>
           <Pressable>
             <Image
               source={require("../../assets/icons/logo-mobile.png")}
@@ -106,9 +107,7 @@ const AddQueryScreen = () => {
             />
           </Pressable>
         </Link>
-        <View style={styles.navTextContainer}>
-          <Text style={styles.navTitle}>Añadir Cita</Text>
-        </View>
+        <Text style={styles.navTitle}>Añadir Cita</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
@@ -208,113 +207,219 @@ const AddQueryScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    position: "relative",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  link: {
-    position: "absolute",
-    left: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  container: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#006368",
-    marginBottom: 15,
-    textAlign: "left",
-  },
-  petInfo: {
-    backgroundColor: "#eaf8f6",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  value: {
-    fontWeight: "normal",
-  },
-  form: {
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-  button: {
-    backgroundColor: "#006368",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalButton: {
-    backgroundColor: "#006368",
-    padding: 10,
-    borderRadius: 5,
-  },
-  modalButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          flexGrow: 1,
+          padding: 20,
+        },
+        header: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 15,
+          textAlign: "left",
+        },
+        petInfo: {
+          backgroundColor: "#eaf8f6",
+          padding: 15,
+          borderRadius: 10,
+          marginBottom: 20,
+        },
+        label: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        value: {
+          fontWeight: "normal",
+        },
+        form: {
+          marginBottom: 20,
+        },
+        input: {
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 8,
+          padding: 10,
+          marginBottom: 15,
+          backgroundColor: "#fff",
+        },
+        button: {
+          backgroundColor: "#006368",
+          padding: 15,
+          borderRadius: 8,
+          alignItems: "center",
+          marginTop: 10,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          width: "80%",
+          alignItems: "center",
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButton: {
+          backgroundColor: "#006368",
+          padding: 10,
+          borderRadius: 5,
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        container: {
+          flexGrow: 1,
+          paddingVertical: 20,
+          paddingHorizontal: "20%",
+        },
+        header: {
+          fontSize: 20,
+          fontWeight: "bold",
+          color: "#006368",
+          marginBottom: 15,
+          textAlign: "left",
+        },
+        petInfo: {
+          backgroundColor: "#eaf8f6",
+          padding: 15,
+          borderRadius: 10,
+          marginBottom: 20,
+        },
+        label: {
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#333",
+        },
+        value: {
+          fontWeight: "normal",
+        },
+        form: {
+          marginBottom: 20,
+        },
+        input: {
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 8,
+          padding: 10,
+          marginBottom: 15,
+          backgroundColor: "#fff",
+        },
+        button: {
+          backgroundColor: "#006368",
+          padding: 15,
+          borderRadius: 8,
+          alignItems: "center",
+          marginTop: 10,
+          marginHorizontal: "40%",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          backgroundColor: "white",
+          padding: 20,
+          borderRadius: 10,
+          width: "80%",
+          alignItems: "center",
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        modalButton: {
+          backgroundColor: "#006368",
+          padding: 10,
+          borderRadius: 5,
+        },
+        modalButtonText: {
+          color: "#fff",
+          fontSize: 16,
+        },
+      });
 
 export default AddQueryScreen;

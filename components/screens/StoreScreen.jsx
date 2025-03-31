@@ -8,9 +8,10 @@ import {
   StyleSheet,
   FlatList,
   Modal,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StoreScreen = () => {
@@ -20,15 +21,20 @@ const StoreScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
   const [balance, setBalance] = useState(null);
-
-  const userId = null;
+  const [userId, setUserId] = useState(null);
   const productTypeId = 1;
 
-  const getUserId = async () => {
-    userId = await AsyncStorage.getItem("userID");
-  };
+  useEffect(() => {
+    const getUserId = async () => {
+      const id = await AsyncStorage.getItem("userID");
+      setUserId(id);
+    };
+    getUserId();
+  }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchData = async () => {
       try {
         const storedCart = await AsyncStorage.getItem("storeCart");
@@ -49,7 +55,6 @@ const StoreScreen = () => {
     };
 
     fetchData();
-    getUserId();
   }, [userId, productTypeId]);
 
   const openProductModal = (product) => {
@@ -123,13 +128,24 @@ const StoreScreen = () => {
         </View>
       )}
 
-      <FlatList
-        data={products}
-        renderItem={renderProduct}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        contentContainerStyle={styles.productsContainer}
-      />
+      {Platform.OS !== "web" && (
+        <FlatList
+          data={products}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.productsContainer}
+        />
+      )}
+      {Platform.OS === "web" && (
+        <FlatList
+          data={products}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={3}
+          contentContainerStyle={styles.productsContainer}
+        />
+      )}
 
       {selectedProduct && (
         <Modal visible={modalVisible} transparent animationType="slide">
@@ -182,153 +198,304 @@ const StoreScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-    elevation: 5,
-  },
-  navIcon: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    flex: 1,
-    marginHorizontal: 10,
-  },
-  cartButton: {
-    padding: 10,
-  },
-  cartIcon: {
-    width: 40,
-    height: 40,
-  },
-  balanceContainer: {
-    padding: 10,
-    backgroundColor: "#E0F7FA",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  balanceText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#009688",
-  },
-  productsContainer: {
-    paddingHorizontal: 10,
-  },
-  productContainer: {
-    backgroundColor: "#FFFFFF",
-    flex: 1,
-    margin: 10,
-    borderRadius: 10,
-    padding: 15,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  productImage: {
-    width: 80,
-    height: 80,
-    marginBottom: 10,
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 5,
-    color: "#333",
-  },
-  productPrice: {
-    fontSize: 14,
-    color: "#009688",
-    marginBottom: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "80%",
-  },
-  modalImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-  },
-  modalProductName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-  },
-  modalProductPrice: {
-    fontSize: 16,
-    color: "#009688",
-    marginBottom: 15,
-  },
-  quantityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  quantityButton: {
-    width: 30,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ddd",
-    borderRadius: 5,
-  },
-  quantityButtonText: {
-    fontSize: 18,
-    color: "#333",
-  },
-  quantityText: {
-    fontSize: 16,
-    marginHorizontal: 10,
-    fontWeight: "bold",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    width: "100%",
-  },
-  actionButton: {
-    backgroundColor: "#009688",
-    flex: 1,
-    paddingVertical: 10,
-    marginHorizontal: 5,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+          elevation: 5,
+        },
+        navIcon: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 22,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+          marginHorizontal: 10,
+        },
+        cartButton: {
+          padding: 10,
+        },
+        cartIcon: {
+          width: 40,
+          height: 40,
+        },
+        balanceContainer: {
+          padding: 10,
+          backgroundColor: "#E0F7FA",
+          alignItems: "center",
+          marginBottom: 10,
+        },
+        balanceText: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#009688",
+        },
+        productsContainer: {
+          paddingHorizontal: 10,
+        },
+        productContainer: {
+          backgroundColor: "#FFFFFF",
+          flex: 1,
+          margin: 10,
+          borderRadius: 10,
+          padding: 15,
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        productImage: {
+          width: 80,
+          height: 80,
+          marginBottom: 10,
+        },
+        productName: {
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 5,
+          color: "#333",
+        },
+        productPrice: {
+          fontSize: 14,
+          color: "#009688",
+          marginBottom: 10,
+        },
+        modalContainer: {
+          flex: 1,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+          width: "80%",
+        },
+        modalImage: {
+          width: 100,
+          height: 100,
+          marginBottom: 15,
+        },
+        modalProductName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#333",
+          marginBottom: 10,
+        },
+        modalProductPrice: {
+          fontSize: 16,
+          color: "#009688",
+          marginBottom: 15,
+        },
+        quantityContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 20,
+        },
+        quantityButton: {
+          width: 30,
+          height: 30,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ddd",
+          borderRadius: 5,
+        },
+        quantityButtonText: {
+          fontSize: 18,
+          color: "#333",
+        },
+        quantityText: {
+          fontSize: 16,
+          marginHorizontal: 10,
+          fontWeight: "bold",
+        },
+        buttonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 10,
+          width: "100%",
+        },
+        actionButton: {
+          backgroundColor: "#009688",
+          flex: 1,
+          paddingVertical: 10,
+          marginHorizontal: 5,
+          borderRadius: 5,
+        },
+        buttonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+          elevation: 5,
+        },
+        navIcon: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 22,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+          marginHorizontal: 10,
+        },
+        cartButton: {
+          padding: 10,
+        },
+        cartIcon: {
+          width: 40,
+          height: 40,
+        },
+        balanceContainer: {
+          padding: 10,
+          backgroundColor: "#E0F7FA",
+          alignItems: "center",
+          marginBottom: 10,
+        },
+        balanceText: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#009688",
+        },
+        productsContainer: {
+          marginHorizontal: "20%",
+          paddingHorizontal: 10,
+        },
+        productContainer: {
+          backgroundColor: "#FFFFFF",
+          flex: 1,
+          margin: 10,
+          borderRadius: 10,
+          padding: 15,
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 5,
+        },
+        productImage: {
+          width: 80,
+          height: 80,
+          marginBottom: 10,
+        },
+        productName: {
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 5,
+          color: "#333",
+        },
+        productPrice: {
+          fontSize: 14,
+          color: "#009688",
+          marginBottom: 10,
+        },
+        modalContainer: {
+          flex: 1,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        modalContent: {
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 10,
+          alignItems: "center",
+          width: "40%",
+        },
+        modalImage: {
+          width: 100,
+          height: 100,
+          marginBottom: 15,
+        },
+        modalProductName: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#333",
+          marginBottom: 10,
+        },
+        modalProductPrice: {
+          fontSize: 16,
+          color: "#009688",
+          marginBottom: 15,
+        },
+        quantityContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 20,
+        },
+        quantityButton: {
+          width: 30,
+          height: 30,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ddd",
+          borderRadius: 5,
+        },
+        quantityButtonText: {
+          fontSize: 18,
+          color: "#333",
+        },
+        quantityText: {
+          fontSize: 16,
+          marginHorizontal: 10,
+          fontWeight: "bold",
+        },
+        buttonContainer: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 10,
+          width: "100%",
+        },
+        actionButton: {
+          backgroundColor: "#009688",
+          flex: 1,
+          paddingVertical: 10,
+          marginHorizontal: 5,
+          borderRadius: 5,
+        },
+        buttonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        },
+      });
 
 export default StoreScreen;

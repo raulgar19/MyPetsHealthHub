@@ -32,6 +32,7 @@ class ApiService {
   }
 
   userLogin(email, password) {
+    console.log("Se envia la peticion POST");
     return this.api.post("AppUsers/userLogin", { email, password });
   }
 

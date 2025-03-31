@@ -8,9 +8,10 @@ import {
   Pressable,
   Image,
   TextInput,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import apiService from "../../api";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UserPetsUsersScreen = () => {
@@ -85,7 +86,7 @@ const UserPetsUsersScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Link asChild href="/vetHome" style={styles.link}>
+        <Link asChild href={"/vetHome"}>
           <Pressable>
             <Image
               source={require("../../assets/icons/logo-mobile.png")}
@@ -93,9 +94,7 @@ const UserPetsUsersScreen = () => {
             />
           </Pressable>
         </Link>
-        <View style={styles.navTextContainer}>
-          <Text style={styles.navTitle}>Listado Clientes</Text>
-        </View>
+        <Text style={styles.navTitle}>Listado clientes</Text>
       </View>
 
       <TextInput
@@ -115,78 +114,147 @@ const UserPetsUsersScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    position: "relative",
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  link: {
-    position: "absolute",
-    left: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  searchBar: {
-    height: 40,
-    borderColor: "#006368",
-    backgroundColor: "white",
-    borderWidth: 1,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 8,
-    paddingLeft: 10,
-    fontSize: 16,
-  },
-  list: {
-    marginHorizontal: 20,
-  },
-  item: {
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-    elevation: 1,
-  },
-  text: {
-    fontSize: 16,
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  loadingText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#555",
-  },
-  errorText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#D9534F",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        searchBar: {
+          height: 40,
+          borderColor: "#006368",
+          backgroundColor: "white",
+          borderWidth: 1,
+          marginTop: 10,
+          marginHorizontal: 20,
+          marginBottom: 20,
+          borderRadius: 8,
+          paddingLeft: 10,
+          fontSize: 16,
+        },
+        list: {
+          marginHorizontal: 20,
+        },
+        item: {
+          backgroundColor: "#f9f9f9",
+          padding: 15,
+          marginBottom: 10,
+          borderRadius: 8,
+          elevation: 1,
+        },
+        text: {
+          fontSize: 16,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        loadingText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        errorText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#D9534F",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logoContainer: {
+          position: "absolute",
+          left: 10,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          flex: 1,
+        },
+        searchBar: {
+          height: 40,
+          borderColor: "#006368",
+          backgroundColor: "white",
+          borderWidth: 1,
+          marginTop: 10,
+          marginHorizontal: "20%",
+          marginBottom: 20,
+          borderRadius: 8,
+          paddingLeft: 10,
+          fontSize: 16,
+        },
+        list: {
+          marginHorizontal: "20%",
+        },
+        item: {
+          backgroundColor: "#f9f9f9",
+          padding: 15,
+          marginBottom: 10,
+          borderRadius: 8,
+          elevation: 1,
+        },
+        text: {
+          fontSize: 16,
+        },
+        bold: {
+          fontWeight: "bold",
+        },
+        loadingText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#555",
+        },
+        errorText: {
+          textAlign: "center",
+          marginTop: 20,
+          fontSize: 16,
+          color: "#D9534F",
+        },
+      });
 
 export default UserPetsUsersScreen;

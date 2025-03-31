@@ -1,14 +1,22 @@
-import React from 'react';
-import { Link } from 'expo-router';
-import { StyleSheet, Text, View, ScrollView, Image, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { Link } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Image,
+  Pressable,
+  Platform,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const TermsAndConditionsMobile = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
         <Image
-          source={require('../../assets/icons/logo-mobile.png')}
+          source={require("../../assets/icons/logo-mobile.png")}
           style={styles.navLogo}
         />
         <Text style={styles.navTitle}>My Pet's Health Hub</Text>
@@ -38,61 +46,120 @@ const TermsAndConditionsMobile = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#B7E3DD',
-  },
-  navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: 60,
-    backgroundColor: '#006368',
-    paddingHorizontal: 20,
-  },
-  navLogo: {
-    width: 40,
-    height: 40,
-    position: 'absolute',
-    left: 20,
-  },
-  navTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  scrollContainer: {
-    padding: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  content: {
-    fontSize: 16,
-    color: '#333',
-    lineHeight: 24,
-    textAlign: 'justify',
-  },
-  returnButton: {
-    marginTop: 30,
-    marginHorizontal: 100,
-    backgroundColor: '#009688',
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        navLogo: {
+          width: 40,
+          height: 40,
+          position: "absolute",
+          left: 20,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        scrollContainer: {
+          padding: 20,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        content: {
+          fontSize: 16,
+          color: "#333",
+          lineHeight: 24,
+          textAlign: "justify",
+        },
+        returnButton: {
+          marginTop: 30,
+          marginHorizontal: 100,
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          alignItems: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        navLogo: {
+          width: 40,
+          height: 40,
+          position: "absolute",
+          left: 20,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        scrollContainer: {
+          padding: 20,
+        },
+        header: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 20,
+          textAlign: "center",
+        },
+        content: {
+          fontSize: 16,
+          color: "#333",
+          lineHeight: 24,
+          textAlign: "justify",
+          marginHorizontal: "20%",
+        },
+        returnButton: {
+          marginTop: 30,
+          marginHorizontal: "45%",
+          backgroundColor: "#009688",
+          borderRadius: 5,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          alignItems: "center",
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+      });
 
 export default TermsAndConditionsMobile;

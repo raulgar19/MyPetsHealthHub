@@ -9,14 +9,14 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  Button,
   Animated,
   Easing,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageToCloudinary } from "../../cloudinary";
-import apiService from "../../api";
+import { uploadImageToCloudinary } from "../../services/cloudinary";
+import apiService from "../../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AddPostScreen = () => {
@@ -249,132 +249,263 @@ const AddPostScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#B7E3DD",
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    height: 60,
-    backgroundColor: "#006368",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  navTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  profileButton: {
-    padding: 5,
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-  },
-  input: {
-    height: 100,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    textAlignVertical: "top",
-    marginBottom: 20,
-    borderColor: "#ddd",
-    borderWidth: 1,
-  },
-  imagePicker: {
-    height: 200,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-    borderColor: "#ddd",
-    borderWidth: 1,
-  },
-  imagePickerText: {
-    color: "#666",
-    fontSize: 16,
-  },
-  selectedImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 10,
-  },
-  postButton: {
-    backgroundColor: "#009688",
-    borderRadius: 8,
-    paddingVertical: 12,
-    marginHorizontal: 100,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  iconContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10,
-    backgroundColor: "#006368",
-    elevation: 5,
-  },
-  iconImage: {
-    width: 40,
-    height: 40,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: 300,
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#000", // Title color set to black
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#333",
-    textAlign: "center", // Center text
-  },
-  modalCloseButton: {
-    backgroundColor: "#009688",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 15,
-  },
-  modalCloseButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
+const styles =
+  Platform.OS !== "web"
+    ? StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileButton: {
+          padding: 5,
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        container: {
+          flex: 1,
+          padding: 20,
+          justifyContent: "center",
+        },
+        input: {
+          height: 100,
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          padding: 15,
+          fontSize: 16,
+          textAlignVertical: "top",
+          marginBottom: 20,
+          borderColor: "#ddd",
+          borderWidth: 1,
+        },
+        imagePicker: {
+          height: 200,
+          backgroundColor: "#f0f0f0",
+          borderRadius: 10,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 20,
+          borderColor: "#ddd",
+          borderWidth: 1,
+        },
+        imagePickerText: {
+          color: "#666",
+          fontSize: 16,
+        },
+        selectedImage: {
+          width: "100%",
+          height: "100%",
+          borderRadius: 10,
+        },
+        postButton: {
+          backgroundColor: "#009688",
+          borderRadius: 8,
+          paddingVertical: 12,
+          marginHorizontal: 100,
+          alignItems: "center",
+          marginTop: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        iconContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          padding: 10,
+          backgroundColor: "#006368",
+          elevation: 5,
+        },
+        iconImage: {
+          width: 40,
+          height: 40,
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          width: 300,
+          padding: 20,
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          color: "#333",
+          textAlign: "center",
+        },
+        modalCloseButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 8,
+          paddingHorizontal: 20,
+          borderRadius: 5,
+          marginTop: 15,
+        },
+        modalCloseButtonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+      })
+    : StyleSheet.create({
+        safeArea: {
+          flex: 1,
+          backgroundColor: "#B7E3DD",
+        },
+        navbar: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          height: 60,
+          backgroundColor: "#006368",
+          paddingHorizontal: 20,
+        },
+        logo: {
+          width: 40,
+          height: 40,
+        },
+        navTitle: {
+          color: "#fff",
+          fontSize: 20,
+          fontWeight: "bold",
+        },
+        profileButton: {
+          padding: 5,
+        },
+        profileIcon: {
+          width: 40,
+          height: 40,
+        },
+        container: {
+          flex: 1,
+          padding: 20,
+          justifyContent: "center",
+        },
+        input: {
+          height: 100,
+          marginHorizontal: "30%",
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          padding: 15,
+          fontSize: 16,
+          textAlignVertical: "top",
+          marginBottom: 20,
+          borderColor: "#ddd",
+          borderWidth: 1,
+        },
+        imagePicker: {
+          height: 200,
+          marginHorizontal: "30%",
+          backgroundColor: "#f0f0f0",
+          borderRadius: 10,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 20,
+          borderColor: "#ddd",
+          borderWidth: 1,
+        },
+        imagePickerText: {
+          color: "#666",
+          fontSize: 16,
+        },
+        selectedImage: {
+          width: "100%",
+          height: "100%",
+          borderRadius: 10,
+        },
+        postButton: {
+          backgroundColor: "#009688",
+          borderRadius: 8,
+          paddingVertical: 12,
+          marginHorizontal: "45%",
+          alignItems: "center",
+          marginTop: 20,
+        },
+        buttonText: {
+          color: "#fff",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+        iconContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          padding: 10,
+          backgroundColor: "#006368",
+          elevation: 5,
+        },
+        iconImage: {
+          width: 40,
+          height: 40,
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        modalContent: {
+          width: 300,
+          padding: 20,
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          alignItems: "center",
+        },
+        modalTitle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#000",
+          marginBottom: 10,
+        },
+        modalText: {
+          fontSize: 16,
+          marginBottom: 20,
+          color: "#333",
+          textAlign: "center",
+        },
+        modalCloseButton: {
+          backgroundColor: "#009688",
+          paddingVertical: 8,
+          paddingHorizontal: 20,
+          borderRadius: 5,
+          marginTop: 15,
+        },
+        modalCloseButtonText: {
+          color: "#FFFFFF",
+          fontSize: 16,
+          fontWeight: "bold",
+        },
+      });
 
 export default AddPostScreen;

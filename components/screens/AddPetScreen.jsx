@@ -213,7 +213,7 @@ const AddPetScreen = () => {
                     if (event.type === "set" && selectedDate) {
                       setDate(selectedDate);
 
-                      const visualFormat = formatDateToDDMMYYYY(selectedDate);
+                      const visualFormat = formatDateView(selectedDate);
 
                       handleInputChange("birthDay", visualFormat);
                     }

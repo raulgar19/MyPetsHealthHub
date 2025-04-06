@@ -52,7 +52,7 @@ const SelectUserScreen = () => {
   };
 
   const handleSelectClient = async (item) => {
-    await AsyncStorage.setItem("ownerID", item.id);
+    await AsyncStorage.setItem("ownerID", item.id.toString());
     router.push("/selectPet");
   };
 

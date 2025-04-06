@@ -412,6 +412,16 @@ const styles =
           paddingLeft: 50,
           width: "100%",
         },
+        passwordInput: {
+          width: "70%",
+          height: 50,
+          backgroundColor: "white",
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          marginVertical: 10,
+          borderColor: "#006368",
+          borderWidth: 1,
+        },
         eyeIconContainer: {
           marginLeft: 10,
         },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ const UserPetsUsersScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +44,7 @@ const UserPetsUsersScreen = () => {
   }, []);
 
   const keepOwner = async (id) => {
-    await AsyncStorage.setItem("ownerID", id);
+    await AsyncStorage.setItem("ownerID", id.toString());
   };
 
   const handleSearch = (text) => {
@@ -55,16 +56,20 @@ const UserPetsUsersScreen = () => {
   );
 
   const renderItem = ({ item }) => (
-    <Link asChild href={"/userPets"} style={styles.item}>
-      <Pressable onPress={keepOwner(item.id)}>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Nombre:</Text> {item.name}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Teléfono:</Text> {item.phone}
-        </Text>
-      </Pressable>
-    </Link>
+    <Pressable
+      onPress={async () => {
+        await keepOwner(item.id);
+        router.push("/userPets");
+      }}
+      style={styles.item}
+    >
+      <Text style={styles.text}>
+        <Text style={styles.bold}>Nombre:</Text> {item.name}
+      </Text>
+      <Text style={styles.text}>
+        <Text style={styles.bold}>Teléfono:</Text> {item.phone}
+      </Text>
+    </Pressable>
   );
 
   if (loading) {

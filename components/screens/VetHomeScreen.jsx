@@ -35,7 +35,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/selectUser"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/add-query-icon.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Añadir cita</Text>
@@ -44,7 +44,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/removeQueryUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/remove-query-icon.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Eliminar cita</Text>
@@ -53,7 +53,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/allQueries"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/queries-icon.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Citas Pendientes</Text>
@@ -66,7 +66,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/vetUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/vet-users-icon.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Usuarios del veterinario</Text>
@@ -75,7 +75,7 @@ const VetHomeScreen = () => {
             <Link asChild href={"/vetPets"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/vet-pets-icon.png")}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuText}>Mascotas del veterinario</Text>
@@ -84,10 +84,16 @@ const VetHomeScreen = () => {
             <Link asChild href={"/userPetsUsers"}>
               <Pressable style={styles.menuItem}>
                 <Image
-                  source={require("../../assets/icons/logo-mobile.png")}
+                  source={require("../../assets/icons/user-pets-icon.png")}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuText}>Mascotas de un cliente</Text>
+                {Platform.OS === "web" ? (
+                  <Text style={styles.menuText}>Mascotas de un cliente</Text>
+                ) : (
+                  <Text style={[styles.menuText, { marginHorizontal: 10 }]}>
+                    Mascotas de un cliente
+                  </Text>
+                )}
               </Pressable>
             </Link>
           </View>

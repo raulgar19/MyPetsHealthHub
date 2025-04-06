@@ -21,10 +21,19 @@ const convertDateFormat = (dateStr) => {
   return `${parts[2]}-${parts[1]}-${parts[0]}`;
 };
 
+const formatDateView = (date) => {
+  const day = ("0" + date.getDate()).slice(-2);
+  const month = ("0" + (date.getMonth() + 1)).slice(-2);
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const AddPetScreen = () => {
   const [date, setDate] = useState(new Date());
   const [lastVaccineDate, setLastVaccineDate] = useState(new Date());
   const [showVaccineField, setShowVaccineField] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showLastVaccinePicker, setShowLastVaccinePicker] = useState(false);
   const [petData, setPetData] = useState({
     chip: "",
     name: "",
@@ -183,21 +192,36 @@ const AddPetScreen = () => {
               onChangeText={(text) => handleInputChange("birthDay", text)}
             />
           ) : (
-            <TouchableOpacity style={styles.input}>
-              <DateTimePicker
-                value={date || new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  const dateStr = selectedDate
-                    ? selectedDate.toISOString().split("T")[0]
-                    : "";
-                  setDate(selectedDate || new Date());
-                  handleInputChange("birthDay", dateStr);
-                }}
-                maximumDate={new Date()}
-              />
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.input}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text style={{ color: petData.birthDay ? "#000" : "#888" }}>
+                  {petData.birthDay || "Fecha de nacimiento"}
+                </Text>
+              </TouchableOpacity>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={date || new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+
+                    if (event.type === "set" && selectedDate) {
+                      setDate(selectedDate);
+
+                      const visualFormat = formatDateToDDMMYYYY(selectedDate);
+
+                      handleInputChange("birthDay", visualFormat);
+                    }
+                  }}
+                  maximumDate={new Date()}
+                />
+              )}
+            </>
           )}
 
           <TextInput
@@ -219,6 +243,7 @@ const AddPetScreen = () => {
           {showVaccineField && (
             <>
               <Text style={styles.subtitle}>Vacunas Obligatorias</Text>
+
               {Platform.OS === "web" ? (
                 <TextInput
                   style={styles.input}
@@ -229,21 +254,41 @@ const AddPetScreen = () => {
                   }
                 />
               ) : (
-                <TouchableOpacity style={styles.input}>
-                  <DateTimePicker
-                    value={lastVaccineDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      const vaccineDate = selectedDate
-                        ? selectedDate.toISOString().split("T")[0]
-                        : "";
-                      setLastVaccineDate(selectedDate || new Date());
-                      handleInputChange("lastVaccineDate", vaccineDate);
-                    }}
-                    maximumDate={new Date()}
-                  />
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    style={[
+                      styles.input,
+                      { justifyContent: "center", alignItems: "center" },
+                    ]}
+                    onPress={() => setShowLastVaccinePicker(true)}
+                  >
+                    <Text
+                      style={{
+                        color: petData.lastVaccineDate ? "#000" : "#888",
+                        width: "100%",
+                      }}
+                    >
+                      {petData.lastVaccineDate || "Fecha última vacuna Rabia"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {showLastVaccinePicker && (
+                    <DateTimePicker
+                      value={lastVaccineDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowLastVaccinePicker(false);
+                        if (event.type === "set" && selectedDate) {
+                          setLastVaccineDate(selectedDate);
+                          const formatted = formatDateView(selectedDate);
+                          handleInputChange("lastVaccineDate", formatted);
+                        }
+                      }}
+                      maximumDate={new Date()}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -318,6 +363,7 @@ const styles =
           marginVertical: 10,
           borderColor: "#006368",
           borderWidth: 1,
+          justifyContent: "center",
         },
         textArea: {
           height: 100,

@@ -57,7 +57,7 @@ const RemoveQueryUsersScreen = () => {
 
   const renderItem = ({ item }) => (
     <Link asChild href={"/removeQueryUserPets"} style={styles.item}>
-      <Pressable onPress={keepOwner(item.id)}>
+      <Pressable onPress={async () => keepOwner(item.id)}>
         <Text style={styles.text}>
           <Text style={styles.bold}>Nombre:</Text> {item.name}
         </Text>

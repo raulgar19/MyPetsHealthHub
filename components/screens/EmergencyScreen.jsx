@@ -11,7 +11,8 @@ import {
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, Linking } from "expo-router";
+import { Link } from "expo-router";
+import { Linking } from "react-native";
 import apiService from "../../services/api";
 
 const EmergencyScreen = () => {

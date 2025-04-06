@@ -32,7 +32,7 @@ const AllQueriesScreen = () => {
         setAppointments(response.data);
         setLoading(false);
       } catch (err) {
-        setError("Error al cargar las citas");
+        setError("No hay citas disponibles");
         setLoading(false);
       }
     };
@@ -84,6 +84,17 @@ const AllQueriesScreen = () => {
   if (error) {
     return (
       <SafeAreaView style={styles.safeArea}>
+        <View style={styles.navbar}>
+          <Link asChild href={"/vetHome"}>
+            <Pressable>
+              <Image
+                source={require("../../assets/icons/logo-mobile.png")}
+                style={styles.logo}
+              />
+            </Pressable>
+          </Link>
+          <Text style={styles.navTitle}>Citas Pendientes</Text>
+        </View>
         <Text style={styles.errorText}>{error}</Text>
       </SafeAreaView>
     );

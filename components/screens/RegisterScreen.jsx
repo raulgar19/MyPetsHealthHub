@@ -74,7 +74,7 @@ const RegisterScreen = () => {
 
     try {
       await apiService.registerUser(registerModel);
-      router.push("/home");
+      router.push("/index");
     } catch (error) {
       console.error("Error al registrar usuario:", error);
     }

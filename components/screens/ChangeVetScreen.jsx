@@ -223,6 +223,7 @@ const styles =
           fontWeight: "bold",
         },
         itemAddress: {
+          textAlign: "center",
           fontSize: 14,
           color: "#555",
         },

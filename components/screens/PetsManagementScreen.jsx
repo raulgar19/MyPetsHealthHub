@@ -35,8 +35,11 @@ const PetsManagementScreen = () => {
         const petsResponse = await ApiService.getUserPets(userId);
         setPets(petsResponse.data);
       } catch (err) {
-        setError("Error al cargar los datos.");
-        console.error(err);
+        if (err.response && err.response.status === 404) {
+          setError("No hay datos disponibles.");
+        } else {
+          setError("Error al cargar los datos.");
+        }
       } finally {
         setLoading(false);
       }
@@ -107,9 +110,9 @@ const PetsManagementScreen = () => {
           style={{ marginTop: 20 }}
         />
       ) : error ? (
-        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
-          {error}
-        </Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>{error}</Text>
+        </View>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {selectedTab === "Pets" &&
@@ -404,6 +407,16 @@ const styles =
           color: "#fff",
           fontSize: 14,
         },
+        emptyContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyText: {
+          fontSize: 18,
+          color: "#808080",
+          textAlign: "center",
+        },
       })
     : StyleSheet.create({
         safeArea: {
@@ -626,6 +639,16 @@ const styles =
         closeButtonText: {
           color: "#fff",
           fontSize: 14,
+        },
+        emptyContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        emptyText: {
+          fontSize: 18,
+          color: "#808080",
+          textAlign: "center",
         },
       });
 

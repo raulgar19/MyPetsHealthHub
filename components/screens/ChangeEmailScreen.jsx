@@ -170,7 +170,7 @@ const styles =
           justifyContent: "center",
         },
         input: {
-          width: "70%",
+          width: "80%",
           height: 50,
           backgroundColor: "white",
           borderRadius: 5,

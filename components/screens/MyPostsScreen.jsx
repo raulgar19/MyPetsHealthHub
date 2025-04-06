@@ -205,7 +205,9 @@ const styles =
           height: 40,
         },
         loader: {
-          marginTop: 20,
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
         },
         emptyContainer: {
           flex: 1,

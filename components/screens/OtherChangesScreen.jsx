@@ -6,10 +6,16 @@ import {
   Pressable,
   Image,
   Platform,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const OtherChanges = () => {
+  const backgroundSource =
+    Platform.OS === "web"
+      ? require("../../assets/web-background.png")
+      : require("../../assets/mobile-background.png");
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
@@ -24,23 +30,27 @@ const OtherChanges = () => {
         <Text style={styles.navTitle}>Otros cambios</Text>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Link asChild href={"/changeBankAccount"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Cambiar Cuenta Bancaria</Text>
-          </Pressable>
-        </Link>
-        <Link asChild href={"/changeEmail"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Cambiar Email</Text>
-          </Pressable>
-        </Link>
-        <Link asChild href={"/changePass"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Cambiar Contraseña</Text>
-          </Pressable>
-        </Link>
-      </View>
+      <ImageBackground source={backgroundSource} style={styles.background}>
+        <View style={styles.buttonContainer}>
+          <Link asChild href={"/changeBankAccount"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>
+                Cambiar Cuenta Bancaria
+              </Text>
+            </Pressable>
+          </Link>
+          <Link asChild href={"/changeEmail"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>Cambiar Email</Text>
+            </Pressable>
+          </Link>
+          <Link asChild href={"/changePass"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>Cambiar Contraseña</Text>
+            </Pressable>
+          </Link>
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -60,6 +70,10 @@ const styles =
           height: 60,
           backgroundColor: "#006368",
           paddingHorizontal: 20,
+        },
+        background: {
+          flex: 1,
+          resizeMode: "cover",
         },
         logoContainer: {
           position: "absolute",
@@ -113,6 +127,10 @@ const styles =
           height: 60,
           backgroundColor: "#006368",
           paddingHorizontal: 20,
+        },
+        background: {
+          flex: 1,
+          resizeMode: "cover",
         },
         logoContainer: {
           position: "absolute",

@@ -7,10 +7,16 @@ import {
   StyleSheet,
   Image,
   Platform,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const VetScreen = () => {
+  const backgroundSource =
+    Platform.OS === "web"
+      ? require("../../assets/web-background.png")
+      : require("../../assets/mobile-background.png");
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
@@ -33,23 +39,27 @@ const VetScreen = () => {
         </Link>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Link asChild href={"/scheduledQueries"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Consultas programadas</Text>
-          </Pressable>
-        </Link>
-        <Link asChild href={"/myVet"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Mi Veterinario</Text>
-          </Pressable>
-        </Link>
-        <Link asChild href={"/changeVet"}>
-          <Pressable style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Cambiar de Veterinario</Text>
-          </Pressable>
-        </Link>
-      </View>
+      <ImageBackground source={backgroundSource} style={styles.background}>
+        <View style={styles.buttonContainer}>
+          <Link asChild href={"/scheduledQueries"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>Consultas programadas</Text>
+            </Pressable>
+          </Link>
+          <Link asChild href={"/myVet"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>Mi Veterinario</Text>
+            </Pressable>
+          </Link>
+          <Link asChild href={"/changeVet"}>
+            <Pressable style={styles.optionButton}>
+              <Text style={styles.optionButtonText}>
+                Cambiar de Veterinario
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -60,6 +70,10 @@ const styles =
         safeArea: {
           flex: 1,
           backgroundColor: "#B7E3DD",
+        },
+        background: {
+          flex: 1,
+          resizeMode: "cover",
         },
         navbar: {
           flexDirection: "row",
@@ -111,6 +125,10 @@ const styles =
         safeArea: {
           flex: 1,
           backgroundColor: "#B7E3DD",
+        },
+        background: {
+          flex: 1,
+          resizeMode: "cover",
         },
         navbar: {
           flexDirection: "row",

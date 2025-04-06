@@ -89,7 +89,7 @@ const CartPharmacyScreen = () => {
 
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItemContainer}>
-      <Image source={item.image} style={styles.cartItemImage} />
+      <Image source={{ uri: item.image }} style={styles.cartItemImage} />
       <View style={styles.cartItemDetails}>
         <Text style={styles.cartItemName}>{item.name}</Text>
         <Text style={styles.cartItemPrice}>{item.price.toFixed(2)}€</Text>

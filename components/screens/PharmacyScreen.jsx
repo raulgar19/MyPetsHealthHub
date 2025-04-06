@@ -125,7 +125,7 @@ const PharmacyScreen = () => {
       onPress={() => openProductModal(item)}
       style={styles.productContainer}
     >
-      <Image source={item.image} style={styles.productImage} />
+      <Image source={{ uri: item.image }} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>{item.price}€</Text>
     </Pressable>
@@ -232,7 +232,10 @@ const PharmacyScreen = () => {
         <Modal visible={modalVisible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Image source={selectedProduct.image} style={styles.modalImage} />
+              <Image
+                source={{ uri: selectedProduct.image }}
+                style={styles.modalImage}
+              />
               <Text style={styles.modalProductName}>
                 {selectedProduct.name}
               </Text>

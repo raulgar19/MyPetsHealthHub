@@ -3,7 +3,7 @@ import axios from "axios";
 class ApiService {
   constructor() {
     this.api = axios.create({
-      baseURL: "http://MyPetsHealthHub.somee.com/api/",
+      baseURL: "http://mypetshealthhub.somee.com/api/",
     });
   }
 

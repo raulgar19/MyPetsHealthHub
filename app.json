@@ -27,7 +27,9 @@
     "web": {
       "favicon": "./assets/icons/logo-mobile.png"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "extra": {
       "router": {
         "origin": false
@@ -35,6 +37,7 @@
       "eas": {
         "projectId": "21840983-ad55-4e0f-b5c4-402ffac799f8"
       }
-    }
+    },
+    "owner": "raulgar_19"
   }
 }

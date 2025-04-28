@@ -55,7 +55,7 @@ const PetsManagementScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navbar}>
-        <Link asChild href={"/home"}>
+        <Link asChild href="/home">
           <Pressable>
             <Image
               source={require("../../assets/icons/logo-mobile.png")}
@@ -64,7 +64,7 @@ const PetsManagementScreen = () => {
           </Pressable>
         </Link>
         <Text style={styles.navTitle}>Mis Mascotas</Text>
-        <Link asChild href={"/profile"}>
+        <Link asChild href="/profile">
           <Pressable>
             <Image
               source={require("../../assets/icons/profile-icon.png")}
@@ -88,6 +88,7 @@ const PetsManagementScreen = () => {
             Mascotas
           </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => setSelectedTab("HealthCard")}
           style={[styles.tab, selectedTab === "HealthCard" && styles.activeTab]}
@@ -117,9 +118,9 @@ const PetsManagementScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {selectedTab === "Pets" &&
             pets.map((pet) => (
-              <Link asChild href={"/petDetails"} key={pet.id}>
+              <Link asChild href="/petDetails" key={pet.id}>
                 <TouchableOpacity
-                  onPress={setPetId(pet.id)}
+                  onPress={() => setPetId(pet.id)}
                   style={styles.petInfoContainer}
                 >
                   <View style={styles.petImageContainer}>

@@ -7,7 +7,7 @@ const cloudinaryConfig = {
 
 export const uploadImageToCloudinary = async (imageUri) => {
   const data = new FormData();
-  data.append("file", imageUri); // Usar el URI base64 directamente
+  data.append("file", imageUri);
   data.append("upload_preset", cloudinaryConfig.preset_name);
 
   try {

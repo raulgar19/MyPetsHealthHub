@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import {
   View,
   Text,
@@ -21,21 +21,26 @@ const PetsManagementScreen = () => {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
+    const fetchUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userID");
+      setUserId(storedUserId);
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
     const fetchPetsData = async () => {
       try {
-        const userId = await AsyncStorage.getItem("userID");
-        if (!userId) {
-          setError("No se encontró el usuario.");
-          setLoading(false);
-          return;
-        }
-
         const petsResponse = await ApiService.getUserPets(userId);
         setPets(petsResponse.data);
       } catch (err) {
-        if (err.response && err.response.status === 404) {
+        if (err.response?.status === 404) {
           setError("No hay datos disponibles.");
         } else {
           setError("Error al cargar los datos.");
@@ -46,10 +51,15 @@ const PetsManagementScreen = () => {
     };
 
     fetchPetsData();
-  }, []);
+  }, [userId]);
 
-  const setPetId = (petId) => async () => {
-    await AsyncStorage.setItem("petID", petId);
+  const setPetId = async (petId) => {
+    try {
+      await AsyncStorage.setItem("petID", petId.toString());
+      router.push("/petDetails");
+    } catch (error) {
+      console.error("Error guardando petID", error);
+    }
   };
 
   return (
@@ -118,28 +128,27 @@ const PetsManagementScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {selectedTab === "Pets" &&
             pets.map((pet) => (
-              <Link asChild href="/petDetails" key={pet.id}>
-                <TouchableOpacity
-                  onPress={() => setPetId(pet.id)}
-                  style={styles.petInfoContainer}
-                >
-                  <View style={styles.petImageContainer}>
-                    <Image
-                      source={require("../../assets/icons/logo-mobile.png")}
-                      style={styles.petImage}
-                    />
-                  </View>
-                  <View style={styles.petDetailsContainer}>
-                    <Text style={styles.petName}>{pet.name}</Text>
-                    <Text style={styles.petBreed}>Raza: {pet.breed}</Text>
-                    <Text style={styles.petAge}>
-                      Fecha Nacimiento:{" "}
-                      {new Date(pet.birthday).toLocaleDateString()}
-                    </Text>
-                    <Text style={styles.petWeight}>Peso: {pet.weight} kg</Text>
-                  </View>
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity
+                onPress={() => setPetId(pet.id)}
+                style={styles.petInfoContainer}
+                key={pet.id}
+              >
+                <View style={styles.petImageContainer}>
+                  <Image
+                    source={require("../../assets/icons/logo-mobile.png")}
+                    style={styles.petImage}
+                  />
+                </View>
+                <View style={styles.petDetailsContainer}>
+                  <Text style={styles.petName}>{pet.name}</Text>
+                  <Text style={styles.petBreed}>Raza: {pet.breed}</Text>
+                  <Text style={styles.petAge}>
+                    Fecha Nacimiento:{" "}
+                    {new Date(pet.birthday).toLocaleDateString()}
+                  </Text>
+                  <Text style={styles.petWeight}>Peso: {pet.weight} kg</Text>
+                </View>
+              </TouchableOpacity>
             ))}
 
           {selectedTab === "HealthCard" &&
@@ -161,7 +170,9 @@ const PetsManagementScreen = () => {
                           Tarjeta Sanitaria de Mascota
                         </Text>
                       </View>
-                      <QRCode value={pet.petCard.qrCode} size={50} />
+                      {Platform.OS === "web" && (
+                        <QRCode value={pet.petCard.qrCode} size={50} />
+                      )}
                     </View>
                     <View style={styles.content}>
                       <Text style={styles.idNumber}>Chip: {pet.chip}</Text>

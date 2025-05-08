@@ -9,6 +9,7 @@ import {
   Pressable,
   Animated,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import QRCode from "react-native-qrcode-svg";
@@ -135,7 +136,9 @@ const PetCardScreen = () => {
                   Tarjeta Sanitaria de Mascota
                 </Text>
               </View>
-              <QRCode value={pet.petCard.qrCode} size={50} />
+              {Platform.OS === "web" && (
+                <QRCode value={pet.petCard.qrCode} size={50} />
+              )}
             </View>
 
             <View style={styles.content}>
@@ -150,10 +153,11 @@ const PetCardScreen = () => {
               </Text>
             </View>
           </View>
-
-          <Pressable style={styles.qrButton} onPress={openModal}>
-            <Text style={styles.qrButtonText}>QR</Text>
-          </Pressable>
+          {Platform.OS === "web" && (
+            <Pressable style={styles.qrButton} onPress={openModal}>
+              <Text style={styles.qrButtonText}>QR</Text>
+            </Pressable>
+          )}
 
           <Modal
             transparent={true}

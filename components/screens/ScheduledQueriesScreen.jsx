@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ const ScheduledQueriesScreen = () => {
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchQueries = async () => {
@@ -60,7 +61,8 @@ const ScheduledQueriesScreen = () => {
   };
 
   const handleSubmit = async (queryId) => {
-    await AsyncStorage.setItem("queryID", queryId);
+    await AsyncStorage.setItem("queryID", queryId.toString());
+    router.push("/queryDetails");
   };
 
   const renderQuery = ({ item }) => {
@@ -70,17 +72,15 @@ const ScheduledQueriesScreen = () => {
     );
 
     return (
-      <Link asChild href={"/queryDetails"}>
-        <Pressable
-          style={styles.queryContainer}
-          onPress={() => handleSubmit(item.id)}
-        >
-          <Text style={styles.petName}>Mascota: {item.pet.name}</Text>
-          <Text style={styles.details}>Fecha: {formattedDate}</Text>
-          <Text style={styles.details}>Hora: {formattedTime}</Text>
-          <Text style={styles.details}>Veterinario: {item.vet.name}</Text>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={styles.queryContainer}
+        onPress={() => handleSubmit(item.id)}
+      >
+        <Text style={styles.petName}>Mascota: {item.pet.name}</Text>
+        <Text style={styles.details}>Fecha: {formattedDate}</Text>
+        <Text style={styles.details}>Hora: {formattedTime}</Text>
+        <Text style={styles.details}>Veterinario: {item.vet.name}</Text>
+      </Pressable>
     );
   };
 

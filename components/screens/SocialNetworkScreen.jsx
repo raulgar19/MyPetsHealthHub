@@ -185,7 +185,7 @@ const styles =
         },
         postImage: {
           width: "100%",
-          aspectRatio: 5,
+          aspectRatio: 1,
           borderRadius: 10,
           marginTop: 10,
           resizeMode: "contain",

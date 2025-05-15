@@ -54,13 +54,20 @@ const MyPostsScreen = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const renderPostItem = ({ item }) => (
-    <View style={styles.postItem}>
-      <Text style={styles.postDate}>{formatDate(item.postDate)}</Text>
-      <Text style={styles.postContent}>{item.description}</Text>
-      <Image source={item.image} style={styles.postImage} />
-    </View>
-  );
+  const renderPostItem = ({ item }) =>
+    Platform.OS === "web" ? (
+      <View style={styles.postItem}>
+        <Text style={styles.postDate}>{formatDate(item.postDate)}</Text>
+        <Text style={styles.postContent}>{item.description}</Text>
+        <Image source={item.image} style={styles.postImage} />
+      </View>
+    ) : (
+      <View style={styles.postItem}>
+        <Text style={styles.postDate}>{formatDate(item.postDate)}</Text>
+        <Text style={styles.postContent}>{item.description}</Text>
+        <Image source={{ uri: item.image }} style={styles.postImage} />
+      </View>
+    );
 
   return (
     <SafeAreaView style={styles.safeArea}>
